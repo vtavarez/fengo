@@ -1,0 +1,23 @@
+@mixin link-color($color) {
+    color: $color;
+
+    &:hover {
+        color: $color;
+    }
+}
+
+@mixin line-height($height, $height_md) {
+    line-height: $height;
+
+    @include media-breakpoint-up(md){
+        line-height: $height_md;
+    }
+}
+
+@mixin margin-bottom($margin){
+    margin-bottom: $margin;
+}
+
+@mixin word-spacing($space) {
+    word-spacing: $space;
+}

@@ -1,0 +1,190 @@
+.product {
+  position: relative;
+  height: 30.68rem;
+
+  @include media-breakpoint-up(md) {
+    height: 22.68rem;
+  }
+
+  @include media-breakpoint-up(lg) {
+    height: 30.68rem;
+
+    &:hover,
+    &:focus-within {
+      .product--buttons {
+        display: block;
+      }
+    }
+  }
+
+  &--url {
+    display: block;
+    text-decoration: none;
+    color: $featured-collection--color-secondary;
+    outline-offset: -2px;
+
+    &:hover {
+      text-decoration: none;
+      color: $featured-collection--color-secondary;
+    }
+  }
+
+  &--image {
+    display: block;
+    width: 100%;
+    height: 21.87rem;
+    object-fit: contain;
+    object-position: top;
+
+    @include media-breakpoint-up(md) {
+      height: 11.87rem;
+    }
+
+    @include media-breakpoint-up(lg) {
+      height: 21.87rem;
+    }
+  }
+
+  &--details {
+    margin-top: 1.56rem;
+    line-height: 1.5;
+
+    &-title {
+      font-family: $merri-regular, sans-serif;
+      font-size: .8rem;
+      text-transform: capitalize;
+
+      @include media-breakpoint-up(md) {
+        font-size: .7rem;
+      }
+
+      @include media-breakpoint-up(lg) {
+        font-size: .8rem;
+      }
+    }
+
+    &-price {
+      font-family: $cousine-bold, sans-serif;
+      font-size: 1rem;
+      text-align: right;
+
+      &-compare {
+        display: block;
+        text-decoration: line-through;
+        font-size: .8rem;
+        color: $featured-collection--color-primary;
+      }
+
+      @include media-breakpoint-up(md) {
+        font-size: .7rem;
+      }
+
+      @include media-breakpoint-up(lg) {
+        font-size: 1rem;
+      }
+    }
+
+  }
+
+  &--badge,
+  &--badge-new,
+  &--badge-discount {
+    position: absolute;
+    width: 5rem;
+    min-height: 1.875rem;
+    padding: 5px 0;
+    top: 1rem;
+    background: transparent;
+    border: 3px solid $featured-collection--color-primary;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: .85;
+    text-align: center;
+    color: $featured-collection--color-primary;
+    text-transform: uppercase;
+  }
+
+  &--badge-discount {
+    border-color: $featured-collection--color-badge;
+    color: $featured-collection--color-badge;
+    font-weight: 800;
+  }
+
+  &--badge-new {
+    border-color: $featured-collection--color-secondary;
+    color: $featured-collection--color-secondary;
+  }
+
+  &--buttons {
+    position: absolute;
+    display: block;
+    width: 100%;
+    bottom: 10px;
+    border: 2px solid $featured-collection--color-secondary;
+    padding: 10px 0;
+    margin-top: 15px;
+
+    &-button {
+      display: block;
+      width: fit-content;
+      font-family: $merri-bold;
+      font-size: 1rem;
+      text-align: center;
+      text-transform: uppercase;
+      line-height: 1;
+      color: $featured-collection--color-secondary;
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0 auto;
+      cursor: pointer;
+
+
+      &:disabled {
+        color: $featured-collection--color-primary;
+      }
+
+      @include media-breakpoint-up(md) {
+        font-size: .55rem;
+
+          &:first-child {
+            margin-right: 8px;
+          }
+
+          &:last-child {
+            margin-left: 8px
+          }
+      }
+
+      @include media-breakpoint-up(lg) {
+        font-size: .9rem;
+
+        &:hover,
+        &:focus-visible {
+          color: $featured-collection--color-active;
+          text-decoration: none;
+        }
+
+        &:disabled {
+          color: $featured-collection--color-primary;
+          cursor: default;
+
+          &:hover,
+          &:focus-visible {
+            color: $featured-collection--color-primary;
+            text-decoration: none;
+          }
+        }
+      }
+    }
+
+    &-divider {
+      border-right: 2px solid $featured-collection--color-secondary;
+    }
+
+    @include media-breakpoint-up(lg) {
+      display: none;
+    }
+  }
+}

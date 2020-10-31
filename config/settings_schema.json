@@ -1,0 +1,21 @@
+[
+	{
+		"name": "theme_info",
+		"theme_name": "Fengo",
+		"theme_version": "1.0.0",
+		"theme_author": "Victor Tavarez",
+		"theme_documentation_url": "https://github.com/vtavarez/fengo",
+		"theme_support_url": "https://github.com/vtavarez/fengo/issues"
+	},
+	{
+		"name": "Favicon",
+		"settings": [
+			{
+				"type": "image_picker",
+				"id": "favicon",
+				"label": "Favicon image",
+				"info": "Will be scaled down to 32 x 32px"
+			}
+		]
+	}
+]

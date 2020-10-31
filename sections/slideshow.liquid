@@ -1,0 +1,169 @@
+{% assign app_type = 'vue-slideshow' %}
+
+<div id="vue-slideshow-{{ section.id }}"
+     class="swiper-container"
+     data-app-id="{{ section.id }}"
+     data-app-type="{{ app_type }}"
+     v-swiper:slideshow="options"
+>
+
+    <script id="{{ section.id }}-{{ app_type }}">
+        window
+            .theme
+            .vue
+            .availableApps
+            .push({type: "{{ app_type }}", id: "{{ section.id }}"});
+    </script>
+
+    <div
+        class="swiper-wrapper"
+        v-bind:class="initializing"
+    >
+
+        {%- comment -%}
+
+            Slides Start
+
+        {%- endcomment -%}
+
+        {% for block in section.blocks %}
+
+        <div class="swiper-slide" {{ block.shopify_attributes }}>
+
+            <picture>
+                <source srcset="{{ block.settings.image | img_url: '2000x'}}" media="(min-width: 992px)">
+                <source srcset="{{ block.settings.image | img_url: '800x'}}" media="(min-width: 768px)">
+                <img
+                    class="swiper--image"
+                    src="{{ block.settings.image | img_url: '400x' }}"
+                    alt="{{ block.settings.image.alt }}"
+                >
+            </picture>
+
+            <div class="swiper--slide-content">
+                <div class="container">
+                    <div class="swiper--content
+                        {% if block.settings.align == 'Left' %} swiper--content-left {% endif %}
+                        {% if block.settings.align == 'Right' %} swiper--content-right {% endif %}
+                        {% if block.settings.align == 'Center' %} swiper--content-center {% endif %}"
+                    >
+                        {{ block.settings.content }}
+
+                        <a  class="swiper--link {% for class in block.settings.link_classes %}{{ class }}{% endfor %}"
+                            href="{{ block.settings.url }}"
+                            tabindex="-1"
+                        >
+                            {{ block.settings.link_cta }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+        {%- comment -%}
+
+            Slides End
+
+        {%- endcomment -%}
+
+    </div>
+
+    {% unless section.blocks.size < 2 %}
+
+        <div class="swiper-pagination"></div>
+
+        <button
+            class="swiper--button-prev"
+            v-bind:aria-disabled="controls.prev.disable"
+            v-bind:disabled="controls.prev.disable"
+            v-on:click="prev"
+            aria-label="previous slide"
+        >
+            <span class="swiper--button-icon" aria-hidden="true">
+                {% include 'icon-chevron-left.svg' %}
+            </span>
+        </button>
+        <button
+            class="swiper--button-next"
+            v-bind:aria-disabled="controls.next.disable"
+            v-bind:disabled="controls.next.disable"
+            v-on:click="next"
+            aria-label="next slide"
+        >
+            <span class="swiper--button-icon" aria-hidden="true">
+                {% include 'icon-chevron-right.svg' %}
+            </span>
+        </button>
+
+    {% endunless %}
+
+</div>
+
+{% schema %}
+{
+    "name": "Slideshow",
+    "max_blocks": 4,
+        "blocks": [
+                {
+                        "name": "Slide",
+                        "type": "slide",
+                        "settings": [
+                                {
+                                        "id": "image",
+                                        "type": "image_picker",
+                                        "label": "Image"
+                },
+                                {
+                                        "id": "content",
+                                        "type": "html",
+                    "label": "Content",
+                    "info": "Use basic HTML to format text"
+                },
+                {
+                    "id": "align",
+                    "type": "radio",
+                    "label": "Align Content",
+                    "options": [
+                        {
+                            "value": "Left"
+                        },
+                        {
+                            "value": "Right"
+                        },
+                        {
+                            "value": "Center"
+                        }
+                    ],
+                    "default": "Left"
+                },
+                {
+                    "id": "url",
+                    "type": "url",
+                    "label": "Link to Product or Collection."
+                },
+                {
+                    "id": "link_cta",
+                    "type": "text",
+                    "label": "Link Call to Action."
+                },
+                {
+                    "id": "link_classes",
+                    "type": "text",
+                    "label": "Link CSS classes",
+                    "info": "Seperate each class with a space."
+                }
+                        ]
+        }
+    ],
+    "presets": [
+        {
+            "category": "image",
+            "name": "Slideshow"
+
+        }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,105 @@
+{% assign app_type = 'vue-featured-collection' %}
+
+<section class="featured-collection"
+         data-app-id="{{ section.id }}"
+         data-app-type="{{ app_type }}"
+         id="vue-featured-collection-{{ section.id }}"
+>
+
+    <script id="{{ section.id }}-{{ app_type }}">
+        window
+            .theme
+            .vue
+            .availableApps
+            .push({
+                type: "{{ app_type }}",
+                id: "{{ section.id }}",
+                data: [{% for block in section.blocks %}{{ collections[block.settings.collection].title | json }},{% endfor %}]
+            });
+    </script>
+
+    <div class="container">
+        <div class="row">
+            {%- comment -%} Tabs {%- endcomment -%}
+            <div class="col-12">
+                <ul class="featured-collection--tabs" v-on:click="collectionSelected">
+
+                    {% for block in section.blocks %}
+
+                        {% assign collection_title = collections[block.settings.collection].title %}
+
+                        <li class="featured-collection--tabs-tab"
+                            data-collection="{{ collection_title }}"
+                            role="tab" tabindex="0"
+                            v-bind:aria-selected="collections['{{ collection_title }}']"
+                            v-bind:class="{ 'featured-collection--tabs-tab-active': collections['{{ collection_title }}'] }"
+                            {{ block.shopify_attributes }}
+                        >
+                            {{ collection_title }}
+                        </li>
+
+                    {% endfor %}
+                </ul>
+            </div>
+            {%- comment -%} Products {%- endcomment -%}
+            <div class="col-12">
+                {% for block in section.blocks %}
+                    {% assign collection_title = collections[block.settings.collection].title %}
+                    {% assign products = collections[block.settings.collection].products %}
+
+                    <div class="featured-collection--products"
+                         v-bind:class="{ 'featured-collection--products-active': collections['{{ collection_title }}'] }"
+                         {{ block.shopify_attributes }}
+                    >
+                        <div class="row">
+                            {% for product in products limit: section.settings.products_per_page %}
+                                <div class="col-12 col-md-3">
+                                    {% include 'product' with product: product %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% schema %}
+{
+    "name": "Featured Collection",
+    "max_blocks": 4,
+    "blocks": [
+        {
+            "name": "Collection",
+            "type": "collection",
+            "settings": [
+                {
+                    "type": "collection",
+                    "id": "collection",
+                    "label": "Featured collection"
+                }
+            ]
+        }
+    ],
+    "settings": [
+        {
+            "type": "select",
+            "id": "products_per_page",
+            "options": [
+                { "value": "4", "label": "4 Products"},
+                { "value": "8", "label": "8 Products"},
+                { "value": "12", "label": "12 Products"},
+                { "value": "16", "label": "16 Products"}
+            ],
+            "label": "Products per collection"
+        }
+    ],
+    "presets": [
+        {
+            "category": "collection",
+            "name": "Featured Collection"
+        }
+    ]
+}
+{% endschema %}

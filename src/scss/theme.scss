@@ -1,0 +1,41 @@
+//* BOOTSTRAP
+@import '~bootstrap/scss/bootstrap';
+
+//* SWIPER
+@import '~swiper/swiper';
+@import '~swiper/components/navigation/navigation';
+@import '~swiper/components/pagination/pagination';
+@import '~swiper/components/thumbs/thumbs';
+@import '~swiper/components/a11y/a11y';
+@import '~swiper/components/controller/controller';
+@import '~swiper/components/zoom/zoom';
+
+//* GLOBAL
+@import './fonts';
+@import './variables';
+@import './base';
+@import './mixins';
+@import './content';
+
+//* HEADER
+@import './header/topbar';
+@import './header/logo';
+@import './header/combobox';
+@import './header/minicart';
+@import './header/menu-mobile';
+@import './header/menu-tablet';
+@import './header/menu-desktop';
+@import './header/menu-ads';
+
+//* SLIDESHOW
+@import './slideshow/main';
+
+/* IMAGE GALLERY */
+@import './gallery/main';
+
+//* FEATURED COLLECTION
+@import './featured_collection/main';
+
+//* PRODUCT
+@import './product/main';
+

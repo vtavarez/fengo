@@ -1,0 +1,42 @@
+@font-face {
+    font-family: 'roboto_condensed';
+    src: url("{{ 'roboto-condensed-webfont.woff2' | asset_url }}") format('woff2'),
+         url("{{ 'roboto-condensed-webfont.woff' | asset_url }}") format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'roboto_condensed_bold';
+    src: url("{{ 'robotocondensed-bold-webfont.woff2' | asset_url }}") format('woff2'),
+         url("{{ 'robotocondensed-bold-webfont.woff' | asset_url }}") format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'cousine_bold';
+    src: url("{{ 'cousine-bold-webfont.woff2' | asset_url }}") format('woff2'),
+         url("{{ 'cousine-bold-webfont.woff' | asset_url }}") format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'merriweather_regular';
+    src: url("{{ 'merriweathersans-regular-webfont.woff2' | asset_url }}") format('woff2'),
+         url("{{ 'merriweathersans-regular-webfont.woff' | asset_url }}") format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'merriweather_bold';
+    src: url("{{ 'merriweathersans-bold-webfont.woff2' | asset_url }}") format('woff2'),
+         url("{{ 'merriweathersans-bold-webfont.woff' | asset_url }}") format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'merriweather_extrabold';
+    src: url("{{ 'merriweathersans-extrabold-webfont.woff2' | asset_url }}") format('woff2'),
+         url("{{ 'merriweathersans-extrabold-webfont.woff' | asset_url }}") format('woff');
+    font-weight: normal;
+    font-style: normal;
+}

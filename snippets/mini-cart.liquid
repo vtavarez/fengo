@@ -1,0 +1,87 @@
+<div
+    v-on:keydown="trapFocus"
+    v-on:click.stop
+    v-bind:class="miniCartActive"
+    class="minicart"
+>
+    <div class="container">
+        <p class="minicart--title">Recently added item(s)</p>
+
+        <div class="minicart--product">
+            <div class="row">
+                <div class="col-4">
+                    <img
+                        class="minicart--product-img"
+                        src="https://via.placeholder.com/80x104"
+                        alt="product image" />
+                </div>
+                <div class="col-6 no-padding">
+                    <p class="minicart--product-title" aria-label="product name">
+                        mustard yellow ruffle
+                    </p>
+                    <div class="minicart--product-quantity">
+                        <button
+                            v-on:click="decreaseQuantity"
+                            v-bind:disabled="minicart.disabled"
+                            class="minicart--decrease-quantity-btn"
+                            aria-label="decrease quantity"
+                        >
+                            {% include 'icon-minus.svg'%}
+                        </button>
+                        <input
+                            class="minicart--quantity"
+                            type="text"
+                            v-bind:value="minicart.quantity"
+                            readonly
+                            aria-readonly="true"
+                            tabindex="-1"
+                        >
+                        <button
+                            v-on:click="increaseQuantity"
+                            class="minicart--increase-quantity-btn"
+                            aria-label="increase quantity"
+                        >
+                            {% include 'icon-plus.svg'%}
+                        </button>
+                    </div>
+                    <p class="minicart--product-price">
+                        <span aria-label="product price" class="strikeout-price">$250</span>
+                        <span aria-label="product sale price" class="price">$150</span>
+                    </p>
+                </div>
+                <div class="col-2">
+                    <button aria-label="remove product" class="minicart--remove-icon">
+                        <span aria-hidden="true">
+                            {% include 'icon-close.svg' %}
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="minicart--checkout-links">
+            <div class="container">
+                <div class="row">
+                    <div class="col-6 minicart--checkout-link-divider">
+                        <a  role="navigation"
+                            aria-roledescription="cart page"
+                            class="minicart--checkout-link"
+                            href="/cart"
+                        >
+                            cart
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a role="navigation"
+                            aria-roledescription="checkout page"
+                            class="minicart--checkout-link"
+                            href="/checkout"
+                        >
+                            checkout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

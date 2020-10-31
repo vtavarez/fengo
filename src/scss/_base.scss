@@ -1,0 +1,21 @@
+body {
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.no-padding {
+    padding: 0;
+}
+
+.no-position {
+    position: unset;
+}
+
+.relative-position {
+    position: relative;
+}
+
+input[type=text] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}

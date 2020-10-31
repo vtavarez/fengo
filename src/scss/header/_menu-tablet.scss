@@ -1,0 +1,12 @@
+.menu-tablet {
+    display: none;
+    position: relative;
+
+    @include media-breakpoint-up(md) {
+        display: block;
+    }
+
+    @include media-breakpoint-up(lg) {
+        display: none;
+    }
+}

@@ -1,0 +1,16 @@
+{% assign sizes = srcset_sizes | split: ' | ' %}
+<img id="Image-{{ image.id }}"
+    class="blur responsive-image__image lazyload {{ image_class }}"
+    src="{{ image | img_url: thumb_size }}"
+    data-srcset="
+    {% for size in sizes %}
+    {% assign width = size | append: 'x' %}
+        {{ image | img_url: width }} {{ size | append: 'w' }}{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+    "
+    data-widths="{{ image_widths }}"
+    data-aspectratio="{{ image.aspect_ratio }}"
+    data-sizes="auto"
+    tabindex="-1"
+    alt="{{ image_alt | escape }}"
+>

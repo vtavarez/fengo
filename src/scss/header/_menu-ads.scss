@@ -1,0 +1,32 @@
+.menu--ads-primary {
+    display: none;
+
+    @include media-breakpoint-up(lg){
+        display: block;
+    }
+}
+
+.menu--ads-secondary {
+    padding: 0 15px;
+
+    @include media-breakpoint-up(md){
+        padding: 0;
+        margin-top: 20px;
+    }
+
+    @include media-breakpoint-up(lg){
+        padding: 0;
+        margin-top: 50px;
+    }
+}
+
+.menu--ad {
+    position: relative;
+    margin: 10px auto;
+}
+
+.menu--ad-image {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+}

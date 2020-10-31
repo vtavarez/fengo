@@ -1,0 +1,129 @@
+.font-size {
+    &--sm {
+        font-size: 1rem;
+    }
+
+    &--md {
+        @include media-breakpoint-up(md){
+            font-size: 3.1rem;
+        }
+    }
+
+    &--lg {
+        @include media-breakpoint-up(md){
+            font-size: 5.1rem;
+        }
+    }
+}
+
+.color {
+    &--white {
+        @include link-color(#ffffff);
+    }
+
+    &--burlywood {
+        @include link-color(burlywood);
+    }
+
+    &--gold {
+        @include link-color(gold);
+    }
+
+    &--almond {
+        @include link-color(blanchedalmond);
+    }
+}
+
+.line-height {
+
+
+    &--1 {
+        @include line-height(1,1);
+    }
+
+    &--08 {
+        @include line-height(.85,.8);
+    }
+
+    &--09 {
+        @include line-height(.95,.9);
+    }
+}
+
+.margin-bottom {
+
+    &--05 {
+        @include margin-bottom(.5rem);
+    }
+
+    &--1 {
+        @include margin-bottom(1rem);
+    }
+
+    &--2 {
+        @include margin-bottom(2rem);
+    }
+
+    &--3 {
+        @include margin-bottom(3rem);
+    }
+
+    &--4 {
+        @include margin-bottom(4rem);
+    }
+}
+
+.word-spacing-minus-5 {
+    @include word-spacing(-5px);
+}
+
+.text {
+    &--center {
+        text-align: center;
+    }
+
+    &--right {
+        text-align: right;
+    }
+
+    &--uppercase {
+        text-transform: uppercase;
+    }
+}
+
+
+.extra-bold {
+    font-family: $merri-extrabold, sans-serif;
+    font-size: 3.1rem;
+
+    @include media-breakpoint-up(md){
+        font-size: 7.1rem;
+    }
+
+    &--xs {
+        font-family: $merri-extrabold, sans-serif;
+        font-size: 2.1rem;
+
+        @include media-breakpoint-up(md){
+            font-size: 1.5rem;
+        }
+
+        @include media-breakpoint-up(lg){
+            font-size: 2.1rem;
+        }
+    }
+
+    &--sm {
+        font-family: $merri-extrabold, sans-serif;
+        font-size: 3.1rem;
+    }
+
+    &--md {
+        font-family: $merri-extrabold, sans-serif;
+        font-size: 3.1rem;
+
+        @include media-breakpoint-up(md){
+            font-size: 5.1rem;
+        }
+    }
+}
