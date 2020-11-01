@@ -135,11 +135,9 @@ const Header = new Vue({
                 );
             }
 
-            if (subMenuMaxHeight) {
-                toggleAccordian(subMenu, panelIcons[1], panelIcons[0]);
-            } else {
-                toggleAccordian(subMenu, panelIcons[0], panelIcons[1], subMenuScrollHeight);
-            };
+            subMenuMaxHeight
+                ? toggleAccordian(subMenu, panelIcons[1], panelIcons[0])
+                : toggleAccordian(subMenu, panelIcons[0], panelIcons[1], subMenuScrollHeight);
         },
         trapFocus(e) {
             let exit = trapFocus(e);
