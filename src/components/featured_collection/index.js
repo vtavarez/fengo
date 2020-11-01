@@ -38,6 +38,31 @@ class FeaturedCollection {
                     const productImage = e.currentTarget.dataset.productImage;
 
                 },
+                lazyLoad(e){
+                    const chunks = e.currentTarget.dataset.chunks;
+                    const collection = e.currentTarget.dataset.collection;
+                    const url = e.currentTarget.dataset.nextUrl;
+
+                    const featuredCollection = document.querySelector(`.${collection}`);
+
+                    fetch(`https://fengostore.myshopify.com${url}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'text/html'
+                        }
+                    })
+                    .then(res => res.text())
+                    .then(data => {
+                        const fragment = document.createDocumentFragment();
+                        const div = document.createElement('div');
+                        div.innerHTML = data;
+                        const nodes = div.querySelectorAll('.col-12 .col-md-3');
+
+                        nodes.forEach(node => fragment.appendChild(node));
+
+                        featuredCollection.appendChild(fragment);
+                    });
+                },
                 kill() {
                     this.$destroy();
                 }

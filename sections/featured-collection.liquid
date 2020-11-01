@@ -45,19 +45,31 @@
             <div class="col-12">
                 {% for block in section.blocks %}
                     {% assign collection_title = collections[block.settings.collection].title %}
-                    {% assign products = collections[block.settings.collection].products %}
 
                     <div class="featured-collection--products"
                          v-bind:class="{ 'featured-collection--products-active': collections['{{ collection_title }}'] }"
                          {{ block.shopify_attributes }}
                     >
-                        <div class="row">
-                            {% for product in products limit: section.settings.products_per_page %}
-                                <div class="col-12 col-md-3">
-                                    {% include 'product' with product: product %}
-                                </div>
-                            {% endfor %}
-                        </div>
+                        {% paginate collections[block.settings.collection].products by section.settings.products_per_page %}
+                            <div class="{{ collection_title }} row">
+                                {% for product in collections[block.settings.collection].products %}
+                                    <div class="col-12 col-md-3">
+                                        {% include 'product' with product: product, lazyload: paginate %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% unless paginate.parts.size < 1 %}
+                                <button
+                                    class="featured-collection--products-lazyload-button"
+                                    data-collection="{{ collection_title }}"
+                                    data-chunks="{{ paginate.parts.size }}"
+                                    data-next-url="{{ paginate.next.url }}"
+                                    v-on:click.stop="lazyLoad"
+                                >
+                                    load more
+                                </button>
+                            {% endunless %}
+                        {% endpaginate %}
                     </div>
                 {% endfor %}
             </div>

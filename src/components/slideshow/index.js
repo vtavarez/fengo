@@ -95,7 +95,6 @@ class Slideshow {
             },
             mounted() {
                 if(this.slideshow.initialized){
-                    console.log(this.slideshow);
                     this.initialized();
                 }
 

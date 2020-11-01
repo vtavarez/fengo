@@ -31,7 +31,8 @@
         <div class="swiper-slide" {{ block.shopify_attributes }}>
 
             <picture>
-                <source srcset="{{ block.settings.image | img_url: '2000x'}}" media="(min-width: 992px)">
+                <source srcset="{{ block.settings.image | img_url: '1900x'}}" media="(min-width: 1200px)">
+                <source srcset="{{ block.settings.image | img_url: '1000x'}}" media="(min-width: 992px)">
                 <source srcset="{{ block.settings.image | img_url: '800x'}}" media="(min-width: 768px)">
                 <img
                     class="swiper--image"
