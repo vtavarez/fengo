@@ -73,10 +73,18 @@
         text-decoration: line-through;
         font-size: .8rem;
         color: $featured-collection--color-primary;
+
+        @include media-breakpoint-up(md) {
+          font-size: .67rem;
+        }
+
+        @include media-breakpoint-up(lg) {
+          font-size: .8rem;
+        }
       }
 
       @include media-breakpoint-up(md) {
-        font-size: .7rem;
+        font-size: .8rem;
       }
 
       @include media-breakpoint-up(lg) {
@@ -146,15 +154,7 @@
       }
 
       @include media-breakpoint-up(md) {
-        font-size: .55rem;
-
-          &:first-child {
-            margin-right: 8px;
-          }
-
-          &:last-child {
-            margin-left: 8px
-          }
+        font-size: .8rem;
       }
 
       @include media-breakpoint-up(lg) {

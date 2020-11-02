@@ -63,8 +63,8 @@
                     | minus: product.price
                     | times: 100
                     | divided_by: product.compare_at_price
-                    %}
-                    {{ percentage | prepend: '-' | append: '%' }}
+                %}
+                {{ percentage | prepend: '-' | append: '%' }}
             </div>
         {% elsif date_finished > date_now %}
             {% assign days = 7 %}
@@ -79,7 +79,7 @@
     {%- comment -%} Buttons {%- endcomment -%}
     <div class="product--buttons">
         <div class="container">
-            <div class="row no-gutters">
+            <div class="row">
                 <div class="col-6 product--buttons-divider">
                     <button
                         {% if product.available == false %}

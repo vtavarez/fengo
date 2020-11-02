@@ -13,6 +13,13 @@
     font-style: normal;
 }
 @font-face {
+    font-family: 'cousine_regular';
+    src: url("{{ 'cousine-regular-webfont.woff2' | asset_url }}") format('woff2'),
+         url("{{ 'cousine-regular-webfont.woff' | asset_url }}") format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
     font-family: 'cousine_bold';
     src: url("{{ 'cousine-bold-webfont.woff2' | asset_url }}") format('woff2'),
          url("{{ 'cousine-bold-webfont.woff' | asset_url }}") format('woff');

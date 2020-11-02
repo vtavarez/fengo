@@ -23,7 +23,6 @@
             {%- comment -%} Tabs {%- endcomment -%}
             <div class="col-12">
                 <ul class="featured-collection--tabs" v-on:click="collectionSelected">
-
                     {% for block in section.blocks %}
 
                         {% assign collection_title = collections[block.settings.collection].title %}
@@ -51,23 +50,34 @@
                          {{ block.shopify_attributes }}
                     >
                         {% paginate collections[block.settings.collection].products by section.settings.products_per_page %}
-                            <div class="{{ collection_title }} row">
+                            <div class="{{ collection_title | downcase }} row no-margin">
                                 {% for product in collections[block.settings.collection].products %}
-                                    <div class="col-12 col-md-3">
-                                        {% include 'product' with product: product, lazyload: paginate %}
+                                    <div class="featured-collection--product col-12 col-md-4 col-lg-3">
+                                        {% include 'product' with product: product %}
                                     </div>
                                 {% endfor %}
                             </div>
                             {% unless paginate.parts.size < 1 %}
+                            <div class="featured-collection--products-lazyload">
                                 <button
                                     class="featured-collection--products-lazyload-button"
-                                    data-collection="{{ collection_title }}"
-                                    data-chunks="{{ paginate.parts.size }}"
+                                    data-collection="{{ collection_title | downcase }}"
+                                    data-total-pages="{{ paginate.pages }}"
                                     data-next-url="{{ paginate.next.url }}"
+                                    v-bind:aria-disabled="disabled"
+                                    v-bind:disabled="disabled"
                                     v-on:click.stop="lazyLoad"
+                                    v-bind:class="{ 'featured-collection--products-lazyload-active': !loading }"
                                 >
-                                    load more
+                                    show more
                                 </button>
+                                <div
+                                    class="featured-collection--products-lazyload-loader"
+                                    v-bind:class="{ 'featured-collection--products-lazyload-active': loading }"
+                                >
+                                    {% include 'icon-loader.svg' %}
+                                </div>
+                            </div>
                             {% endunless %}
                         {% endpaginate %}
                     </div>

@@ -21,7 +21,9 @@ class FeaturedCollection {
         this._appInstance = new Vue({
             el: this._mountingNode,
             data: {
-                collections: {}
+                collections: {},
+                loading: false,
+                disabled: false
             },
             methods: {
                 collectionSelected(e) {
@@ -39,28 +41,33 @@ class FeaturedCollection {
 
                 },
                 lazyLoad(e){
-                    const chunks = e.currentTarget.dataset.chunks;
+                    const totalPages = e.currentTarget.dataset.totalPages;
                     const collection = e.currentTarget.dataset.collection;
-                    const url = e.currentTarget.dataset.nextUrl;
-
+                    const url = e.currentTarget.dataset.nextUrl.split('page=')[0];
                     const featuredCollection = document.querySelector(`.${collection}`);
 
-                    fetch(`https://fengostore.myshopify.com${url}`, {
+                    let nextPage = 2;
+
+                    this.loading = true;
+
+                    fetch(`https://fengostore.myshopify.com${url}page=${nextPage}`, {
                         method: 'GET',
-                        headers: {
-                            'Content-Type': 'text/html'
-                        }
+                        headers: {'Content-Type': 'text/html'}
                     })
                     .then(res => res.text())
-                    .then(data => {
-                        const fragment = document.createDocumentFragment();
-                        const div = document.createElement('div');
-                        div.innerHTML = data;
-                        const nodes = div.querySelectorAll('.col-12 .col-md-3');
+                    .then(html => {
+                        const shadowDOM = document.createElement('div');
+                        shadowDOM.innerHTML = html;
+                        const productNodes = shadowDOM.querySelectorAll('.featured-collection--product');
+                        const products = document.createDocumentFragment();
 
-                        nodes.forEach(node => fragment.appendChild(node));
+                        productNodes.forEach(productNode => products.appendChild(productNode));
 
-                        featuredCollection.appendChild(fragment);
+                        featuredCollection.appendChild(products);
+
+                        nextPage < totalPages ? nextPage++ : this.disabled = true;
+
+                        this.loading = false;
                     });
                 },
                 kill() {
@@ -69,11 +76,7 @@ class FeaturedCollection {
             },
             beforeMount() {
                 self.appData.forEach((collection, i) => {
-                    if(i === 0){
-                        this.collections[collection] = true;
-                    } else {
-                        this.collections[collection] = false;
-                    }
+                    i === 0 ? this.collections[collection] = true : this.collections[collection] = false;
                 });
             }
         });
