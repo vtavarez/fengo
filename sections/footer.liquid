@@ -12,9 +12,50 @@
                                 </li>
                             {% endfor %}
                         </ul>
+                    {% else %}
+                        <form>
+                            <label>
+                                <input name="email" type="email" placeholder="{{ block.settings.cta }}">
+                            </label>
+                        </form>
                     {% endif %}
                 </div>
             {% endfor %}
+        </div>
+        <div class="flex-wrap-reverse row">
+            <div class="col-12 col-md-6">
+                <div class="footer--cards">
+                    {% unless section.settings.visa == blank %}
+                        <div class="footer--card">
+                            {% include 'icon-card-visa.svg' %}
+                        </div>
+                    {% endunless %}
+                    {% unless section.settings.mastercard == blank %}
+                        <div class="footer--card">
+                            {% include 'icon-card-mastercard.svg' %}
+                        </div>
+                    {% endunless %}
+                    {% unless section.settings.discover == blank %}
+                        <div class="footer--card">
+                            {% include 'icon-card-discover.svg' %}
+                        </div>
+                    {% endunless %}
+                    {% unless section.settings.amex == blank %}
+                        <div class="footer--card">
+                            {% include 'icon-card-amex.svg' %}
+                        </div>
+                    {% endunless %}
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="footer--socials">
+                    {% unless section.settings.facebook == blank %}
+                        <div class="footer--social">
+                            
+                        </div>
+                    {% endunless %}
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -83,27 +124,32 @@
         {
             "id": "facebook",
             "type": "text",
-            "label": "Facebook"
+            "label": "Facebook",
+            "default": "facebook.com"
         },
         {
             "id": "instagram",
             "type": "text",
-            "label": "Instagram"
+            "label": "Instagram",
+            "default": "instagram.com"
         },
         {
             "id": "twitter",
             "type": "text",
-            "label": "Twitter"
+            "label": "Twitter",
+            "default": "twitter.com"
         },
         {
             "id": "pintrest",
             "type": "text",
-            "label": "Pintrest"
+            "label": "Pintrest",
+            "default": "pintrest.com"
         },
         {
             "id": "youtube",
             "type": "text",
-            "label": "Youtube"
+            "label": "Youtube",
+            "default": "youtube.com"
         }
     ]
 }
