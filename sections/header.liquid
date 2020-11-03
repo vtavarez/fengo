@@ -171,15 +171,12 @@
 						<ul class="menu-desktop--items">
 							{% for menu_item in linklists[section.settings.main_linklist].links %}
 								{% if menu_item.links == blank %}
-
 									<li class="menu-desktop--item" v-on:click.stop="clickedAway">
 										<a class="menu-desktop--item-link" href="{{ menu_item.url }}">
 											{{ menu_item.title }}
 										</a>
 									</li>
-
 								{% else %}
-
 									<li
 										class="menu-desktop--item"
 										data-menu="{{ forloop.index0 }}"
@@ -197,7 +194,6 @@
 												{% include 'icon-chevron.svg' %}
 											</span>
 										</button>
-
 										{%- comment -%} Desktop Menu Dropdown {%- endcomment -%}
 										{% include 'menu-desktop-dropdown' with menu: menu_item %}
 									</li>
@@ -210,10 +206,8 @@
 			</div>
 			{%- comment -%} Mobile Menu {%- endcomment -%}
 			<div class="menu-mobile" v-on-clickaway="clickedAway">
-
 				<div class="row">
 					<div class="col-6">
-
 						<button
 							v-on:click.stop="toggleMobileMenu"
 							v-bind:aria-expanded="mobile.menu"
@@ -225,10 +219,8 @@
 							</span>
 							<span id="menu-mobile--title" class="menu-mobile--title">navigation</span>
 						</button>
-
 					</div>
 					<div class="col-6">
-
 						<button
 							v-on:click.stop="toggleMobileCart"
 							v-bind:class="mobileCartActive"
@@ -244,7 +236,6 @@
 								{{ cart.total_price | money }}
 							</span>
 						</button>
-
 					</div>
 				</div>
 				{%- comment -%} Mobile Menu Dropdown {%- endcomment -%}
@@ -280,6 +271,12 @@
 					"type": "text",
 					"label": "SEO",
 					"info": "Description of ad."
+				},
+				{
+					"id": "content",
+					"type": "html",
+					"label": "Content",
+                    "info": "Use basic HTML to format text"
 				}
 			]
 		}

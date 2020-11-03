@@ -1,82 +1,77 @@
 <div v-on:click.stop v-bind:class="mobileMenuActive" class="menu-mobile--dropdown">
     {% assign menu = linklists[section.settings.main_linklist].links  %}
-
     {% for menu_link in menu %}
-
-    {% assign sub_menu_links = menu_link.links %}
-
-    {% if sub_menu_links == blank %}
-        <div class="menu-mobile--item {% if menu_link.active %} menu--active {% endif %}">
-            <a href="{{ menu_link.url }}">{{ menu_link.title }}</a>
-        </div>
-    {% else %}
-        <div class="menu-mobile--item-expand {% if menu_link.active %} menu--active {% endif %}">
-            <div class="row">
-                <div class="col-10">
-                    <a v-on:click.stop href="{{ menu_link.url }}">{{ menu_link.title }}</a>
-                </div>
-                <div class="col-2">
-                    <span class="menu-mobile--item-expand-icon icon--active">
-                        {% include 'icon-plus.svg' %}
-                    </span>
-                    <span class="menu-mobile--item-expand-icon">
-                        {% include 'icon-minus.svg' %}
-                    </span>
+        {% assign sub_menu_links = menu_link.links %}
+        {% if sub_menu_links == blank %}
+            <div class="menu-mobile--item {% if menu_link.active %} menu--active {% endif %}">
+                <a href="{{ menu_link.url }}">{{ menu_link.title }}</a>
+            </div>
+        {% else %}
+            <div v-on:click.stop="togglePanel" class="menu-mobile--item-expand {% if menu_link.active %} menu--active {% endif %}">
+                <div class="row">
+                    <div class="col-10">
+                        <a v-on:click.stop href="{{ menu_link.url }}">{{ menu_link.title }}</a>
+                    </div>
+                    <div class="col-2">
+                        <span class="menu-mobile--item-expand-icon icon--active">
+                            {% include 'icon-plus.svg' %}
+                        </span>
+                        <span class="menu-mobile--item-expand-icon">
+                            {% include 'icon-minus.svg' %}
+                        </span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="menu-mobile--accordian">
-            {% for sub_menu_link in sub_menu_links %}
-                {% assign sub_menu_links = sub_menu_link.links %}
-                {% if sub_menu_links == blank %}
-                    <div class="menu-mobile--subitem {% if sub_menu_link.active %} menu--active {% endif %}">
-                        <a href="{{ sub_menu_link.url }}">{{ sub_menu_link.title }}</a>
-                    </div>
-                {% else %}
-                    <div v-on:click.stop="togglePanel" class="menu-mobile--subitem-expand {% if sub_menu_link.active %} menu--active {% endif %}">
-                        <div class="row">
-                            <div class="col-8">
-                                <a v-on:click.stop href="{{ sub_menu_link.url }}">{{ sub_menu_link.title }}</a>
-                            </div>
-                            <div class="col-4">
-                                <span class="menu-mobile--item-expand-icon icon--active">
-                                    {% include 'icon-plus.svg' %}
-                                </span>
-                                <span class="menu-mobile--item-expand-icon">
-                                    {% include 'icon-minus.svg' %}
-                                </span>
+            <div class="menu-mobile--accordian">
+                {% for sub_menu_link in sub_menu_links %}
+                    {% assign sub_menu_links = sub_menu_link.links %}
+                    {% if sub_menu_links == blank %}
+                        <div class="menu-mobile--subitem {% if sub_menu_link.active %} menu--active {% endif %}">
+                            <a href="{{ sub_menu_link.url }}">{{ sub_menu_link.title }}</a>
+                        </div>
+                    {% else %}
+                        <div v-on:click.stop="togglePanel" class="menu-mobile--subitem-expand {% if sub_menu_link.active %} menu--active {% endif %}">
+                            <div class="row">
+                                <div class="col-8">
+                                    <a v-on:click.stop href="{{ sub_menu_link.url }}">{{ sub_menu_link.title }}</a>
+                                </div>
+                                <div class="col-4">
+                                    <span class="menu-mobile--item-expand-icon icon--active">
+                                        {% include 'icon-plus.svg' %}
+                                    </span>
+                                    <span class="menu-mobile--item-expand-icon">
+                                        {% include 'icon-minus.svg' %}
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="menu-mobile--submenu-accordian">
-                        <ul class="menu-mobile--submenu-items">
-                            {% for grandchild_link in sub_menu_links %}
-                                <li class="menu-mobile--submenu-item {% if grandchild_link.active %} menu--active {% endif %}">
-                                    <a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-    {% endif %}
+                        <div class="menu-mobile--submenu-accordian">
+                            <ul class="menu-mobile--submenu-items">
+                                {% for grandchild_link in sub_menu_links %}
+                                    <li class="menu-mobile--submenu-item {% if grandchild_link.active %} menu--active {% endif %}">
+                                        <a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
     {% endfor %}
     <div class="menu-ads">
         {% for block in section.blocks %}
-            <div>
-                <a class="menu-ads-link" href="{{ block.settings.url }}" {{ block.shopify_attributes }}>
-                    <img
-                        class="menu-ads-image"
-                        src="{{ block.settings.image | img_url: '380x' }}"
-                        alt="{{ block.settings.description }}
-                    ">
+            <a class="menu-ads-link" href="{{ block.settings.url }}" {{ block.shopify_attributes }}>
+                <img
+                    class="menu-ads-image"
+                    src="{{ block.settings.image | img_url: '380x' }}"
+                    alt="{{ block.settings.description }}
+                ">
 
-                    <div class="menu-ads-content">
+                <div class="menu-ads-content">
 
-                    </div>
-                </a>
-            </div>
+                </div>
+            </a>
         {% endfor %}
     </div>
 </div>

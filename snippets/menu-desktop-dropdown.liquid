@@ -31,11 +31,11 @@
                 <div class="col-3">
                     {% assign first_block = section.blocks[0] %}
                     <div class="menu-ads--primary" {{ first_block.shopify_attributes }}>
-                        <a class="menu-ads--primary-link" href="{{ first_block.settings.ad_url }}">
+                        <a class="menu-ads--primary-link" href="{{ first_block.settings.url }}">
                             <img
                                 class="menu-ads--primary-image"
-                                src="{{ first_block.settings.ad_image | img_url: '250x' }}"
-                                alt="{{ first_block.settings.ad_description }}
+                                src="{{ first_block.settings.image | img_url: '250x' }}"
+                                alt="{{ first_block.settings.description }}
                             ">
                             <div class="menu-ads--primary-content">
 
