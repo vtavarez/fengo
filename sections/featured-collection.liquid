@@ -63,7 +63,7 @@
                                     class="featured-collection--products-lazyload-button"
                                     data-collection="{{ collection_title | downcase }}"
                                     data-total-pages="{{ paginate.pages }}"
-                                    data-next-url="{{ paginate.next.url }}"
+                                    data-url="{{ paginate.next.url }}"
                                     v-bind:aria-disabled="disabled"
                                     v-bind:disabled="disabled"
                                     v-on:click.stop="lazyLoad"

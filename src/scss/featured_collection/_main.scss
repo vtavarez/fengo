@@ -76,7 +76,7 @@
 
     &-lazyload {
       position: relative;
-      margin-top: 4.5rem;
+      margin-top: 1.5rem;
 
       &::after {
         content: '';
@@ -86,10 +86,6 @@
         background: $featured-collection--color-primary;
         top: 50%;
         transform: translateY(-50%);
-      }
-
-      @include media-breakpoint-up(lg){
-        margin-top: 4rem;
       }
 
       &-button,

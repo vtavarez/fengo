@@ -6,7 +6,6 @@
      data-app-type="{{ app_type }}"
      v-swiper:slideshow="options"
 >
-
     <script id="{{ section.id }}-{{ app_type }}">
         window
             .theme
@@ -14,66 +13,45 @@
             .availableApps
             .push({type: "{{ app_type }}", id: "{{ section.id }}"});
     </script>
-
     <div
         class="swiper-wrapper"
         v-bind:class="initializing"
     >
-
-        {%- comment -%}
-
-            Slides Start
-
-        {%- endcomment -%}
-
+        {%- comment -%} Slides {%- endcomment -%}
         {% for block in section.blocks %}
-
-        <div class="swiper-slide" {{ block.shopify_attributes }}>
-
-            <picture>
-                <source srcset="{{ block.settings.image | img_url: '1900x'}}" media="(min-width: 1200px)">
-                <source srcset="{{ block.settings.image | img_url: '1000x'}}" media="(min-width: 992px)">
-                <source srcset="{{ block.settings.image | img_url: '800x'}}" media="(min-width: 768px)">
-                <img
-                    class="swiper--image"
-                    src="{{ block.settings.image | img_url: '400x' }}"
-                    alt="{{ block.settings.image.alt }}"
-                >
-            </picture>
-
-            <div class="swiper--slide-content">
-                <div class="container">
-                    <div class="swiper--content
-                        {% if block.settings.align == 'Left' %} swiper--content-left {% endif %}
-                        {% if block.settings.align == 'Right' %} swiper--content-right {% endif %}
-                        {% if block.settings.align == 'Center' %} swiper--content-center {% endif %}"
+            <div class="swiper-slide" {{ block.shopify_attributes }}>
+                <picture>
+                    <source srcset="{{ block.settings.image | img_url: '1900x'}}" media="(min-width: 1200px)">
+                    <source srcset="{{ block.settings.image | img_url: '1000x'}}" media="(min-width: 992px)">
+                    <source srcset="{{ block.settings.image | img_url: '800x'}}" media="(min-width: 768px)">
+                    <img
+                        class="swiper--image"
+                        src="{{ block.settings.image | img_url: '400x' }}"
+                        alt="{{ block.settings.image.alt }}"
                     >
-                        {{ block.settings.content }}
-
-                        <a  class="swiper--link {% for class in block.settings.link_classes %}{{ class }}{% endfor %}"
-                            href="{{ block.settings.url }}"
-                            tabindex="-1"
+                </picture>
+                <div class="swiper--slide-content">
+                    <div class="container">
+                        <div class="swiper--content
+                            {% if block.settings.align == 'Left' %} swiper--content-left {% endif %}
+                            {% if block.settings.align == 'Right' %} swiper--content-right {% endif %}
+                            {% if block.settings.align == 'Center' %} swiper--content-center {% endif %}"
                         >
-                            {{ block.settings.link_cta }}
-                        </a>
+                            {{ block.settings.content }}
+
+                            <a  class="swiper--link {% for class in block.settings.link_classes %}{{ class }}{% endfor %}"
+                                href="{{ block.settings.url }}"
+                                tabindex="-1"
+                            >
+                                {{ block.settings.link_cta }}
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-
-        </div>
-
         {% endfor %}
-
-        {%- comment -%}
-
-            Slides End
-
-        {%- endcomment -%}
-
     </div>
-
     {% unless section.blocks.size < 2 %}
-
         <div class="swiper-pagination"></div>
 
         <button
@@ -98,9 +76,7 @@
                 {% include 'icon-chevron-right.svg' %}
             </span>
         </button>
-
     {% endunless %}
-
 </div>
 
 {% schema %}

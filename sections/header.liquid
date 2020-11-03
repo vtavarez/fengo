@@ -2,41 +2,30 @@
 		v-on-clickaway="clickedAway"
 		class="header"
 >
-
-	{%- comment -%}
-
-	Topbar Start
-
-	{%- endcomment -%}
-
+	{%- comment -%} Topbar {%- endcomment -%}
 	<section class="topbar">
 		<div class="container">
 			<div class="row">
 				<div class="col-12 col-md-7">
-
 					<ul class="topbar--links">
 						{% if shop.customer_accounts_enabled %}
+							{% if customer %}
 
-						{% if customer %}
+								<li class="topbar--link"><a href="/account">my account</a></li>
+								<li class="topbar--link"><a href="/account/logout">log out</a></li>
 
-						<li class="topbar--link"><a href="/account">my account</a></li>
-						<li class="topbar--link"><a href="/account/logout">log out</a></li>
+							{% else %}
 
-						{% else %}
+								<li class="topbar--link">
+									<span><a href="/account/login">log in</a></span>
+									or
+									<span><a href="/account/register">register</a></span>
+								</li>
 
-						<li class="topbar--link">
-							<span><a href="/account/login">log in</a></span>
-							or
-							<span><a href="/account/register">register</a></span>
-						</li>
-
-						{% endif %}
-
+							{% endif %}
 						{% endif %}
 					</ul>
-
 				</div>
-
 				<div class="col-md-5">
 					<ul class="topbar--minicart">
 						<li class="topbar--minicart-wrapper">
@@ -50,7 +39,7 @@
 							>
 								my bag: {{ cart.item_count }} {{ cart.item_count | pluralize: 'item', 'item(s)' }}
 							</button>
-
+							{%- comment -%} Mini Cart Dropdown {%- endcomment -%}
 							{% include 'mini-cart' %}
 						</li>
 					</ul>
@@ -58,64 +47,33 @@
 			</div>
 		</div>
 	</section>
-
-
-	{%- comment -%}
-
-	Topbar End
-
-	{%- endcomment -%}
-
+	{%- comment -%} Navigation {%- endcomment -%}
 	<nav class="navigation">
-
 		<div class="container relative-position">
-
 			<div class="row">
-
+				{%- comment -%} Logo {%- endcomment -%}
 				<div class="col-12 col-md-5 col-lg-3">
-
-					{%- comment -%}
-
-					Logo Start
-
-					{%- endcomment -%}
-
 					{% if section.settings.logo %}
 
-					<a class="logo" href="{{ shop.url }}">
-						{{ section.settings.logo | img_url: 'large' | img_tag: shop.name }}
-					</a>
+						<a class="logo" href="{{ shop.url }}">
+							{{ section.settings.logo | img_url: 'large' | img_tag: shop.name }}
+						</a>
 
 					{% else %}
 
-					<a class="logo" href="{{ shop.url }}">
-						<img src="{{ 'logo.webp' | asset_url }}" alt="{{ shop.name }}">
-					</a>
+						<a class="logo" href="{{ shop.url }}">
+							<img src="{{ 'logo.webp' | asset_url }}" alt="{{ shop.name }}">
+						</a>
 
 					{% endif %}
-
-					{%- comment -%}
-
-					Logo End
-
-					{%- endcomment -%}
-
 				</div>
-
+				{%- comment -%} ComboBox {%- endcomment -%}
 				<div class="col-12 col-md-7 col-lg-9 no-position">
-
-					{%- comment -%}
-
-					ComboBox Start
-
-					{%- endcomment -%}
-
 					<div
 						class="combobox"
 						v-on:click.stop="clearSearch"
 						v-on:keyup="clearSearch"
 					>
-
 						<form v-on:submit.prevent>
 							<label class="combobox--input-label">
 								<input
@@ -129,21 +87,19 @@
 								>
 								<div class="combobox--search-input-icon">
 
-								<span v-if="search.term">
-									{% include 'icon-loader.svg' %}
-								</span>
+									<span v-if="search.term">
+										{% include 'icon-loader.svg' %}
+									</span>
 
-								<span v-else>
-									{% include 'icon-search.svg' %}
-								</span>
+									<span v-else>
+										{% include 'icon-search.svg' %}
+									</span>
 
 								</div>
 							</label>
 						</form>
-
 						<div class="combobox--search-results" v-bind:class="searchActive">
 							<div class="container-fluid">
-
 								<div v-show="search.term">
 									<div class="result" v-for="product in search.results" :key="product.id">
 										<a class="result--link" :href="product.url" aria-labelledby="result--description">
@@ -162,174 +118,97 @@
 										</a>
 									</div>
 								</div>
-
 							</div>
 						</div>
-
 					</div>
-
-					{%- comment -%}
-
-					ComboxBox End
-
-					{%- endcomment -%}
-
-
-					{%- comment -%}
-
-					Desktop Menu Start
-
-					{%- endcomment -%}
-
+					{%- comment -%} Desktop Menu {%- endcomment -%}
 					<div class="menu-desktop">
 						<ul class="menu-desktop--items">
-
 							{% for menu_item in linklists[section.settings.main_linklist].links %}
+								{% if menu_item.links == blank %}
 
-							{% if menu_item.links == blank %}
+									<li class="menu-desktop--item">
+										<a class="menu-desktop--item-link" href="{{ menu_item.url }}">
+											{{ menu_item.title }}
+										</a>
+									</li>
 
-							<li class="menu-desktop--item">
-								<a	class="menu-desktop--item-link"
-									href="{{ menu_item.url }}"
-								>
-									{{ menu_item.title }}
-								</a>
-							</li>
+								{% else %}
 
-							{% else %}
+									<li class="menu-desktop--item"
+										data-menu="{{ forloop.index0 }}"
+										v-on:mouseenter="toggleDesktopMenu"
+										v-on:mouseleave="toggleDesktopMenu"
+										v-on:click.stop="toggleDesktopMenu"
+									>
+										<button
+											class="menu-desktop--item-button"
+											aria-expanded="false"
+											aria-haspopup="false"
+											aria-label="{{menu_item.title}} menu dropdown"
+										>
+											{{ menu_item.title }}
 
-							<li class="menu-desktop--item"
-								data-menu="{{ forloop.index0 }}"
-								v-on:mouseenter="toggleDesktopMenu"
-								v-on:mouseleave="toggleDesktopMenu"
-								v-on:click.stop="toggleDesktopMenu"
-							>
-								<button
-									class="menu-desktop--item-button"
-									aria-expanded="false"
-									aria-haspopup="false"
-									aria-label="{{menu_item.title}} menu dropdown"
-								>
-									{{ menu_item.title }}
+											<span class="menu-desktop--item-icon" aria-hidden="true">
+												{% include 'icon-chevron.svg' %}
+											</span>
+										</button>
 
-									<span class="menu-desktop--item-icon" aria-hidden="true">
-										{% include 'icon-chevron.svg' %}
-									</span>
-								</button>
+										{%- comment -%} Desktop Menu Dropdown {%- endcomment -%}
+										{% include 'menu-desktop-dropdown' with menu: menu_item %}
+									</li>
 
-								{%- comment -%}
-
-								Menu Desktop Dropdown Start
-
-								{%- endcomment -%}
-
-								{% include 'menu-desktop-dropdown' with menu: menu_item %}
-
-								{%- comment -%}
-
-								Menu Desktop Dropdown End
-
-								{%- endcomment -%}
-							</li>
-
-
-							{% endif %}
-
+								{% endif %}
 							{% endfor %}
-
 						</ul>
 					</div>
-
-					{%- comment -%}
-
-					Desktop Menu End
-
-					{%- endcomment -%}
-
 				</div>
-
 			</div>
-
 			<div class="row">
 				<div class="col-md-12">
-
-					{%- comment -%}
-
-					Tablet Menu Start
-
-					{%- endcomment -%}
-
+				{%- comment -%} Tablet Menu {%- endcomment -%}
 					<div class="menu-tablet">
 						<ul class="menu-desktop--items">
-
 							{% for menu_item in linklists[section.settings.main_linklist].links %}
+								{% if menu_item.links == blank %}
 
-							{% if menu_item.links == blank %}
+									<li class="menu-desktop--item" v-on:click.stop="clickedAway">
+										<a class="menu-desktop--item-link" href="{{ menu_item.url }}">
+											{{ menu_item.title }}
+										</a>
+									</li>
 
-							<li class="menu-desktop--item" v-on:click.stop="clickedAway">
-								<a	class="menu-desktop--item-link"
-									href="{{ menu_item.url }}"
-								>
-									{{ menu_item.title }}
-								</a>
-							</li>
+								{% else %}
 
-							{% else %}
+									<li
+										class="menu-desktop--item"
+										data-menu="{{ forloop.index0 }}"
+										v-on:click.stop="toggleDesktopMenu"
+									>
+										<button
+											class="menu-desktop--item-button"
+											aria-expanded="false"
+											aria-haspopup="false"
+											aria-label="{{menu_item.title}} menu dropdown"
+										>
+											{{ menu_item.title }}
 
-							<li class="menu-desktop--item"
-								data-menu="{{ forloop.index0 }}"
-								v-on:click.stop="toggleDesktopMenu"
-							>
-								<button class="menu-desktop--item-button"
-										aria-expanded="false"
-										aria-haspopup="false"
-										aria-label="{{menu_item.title}} menu dropdown"
-								>
-									{{ menu_item.title }}
+											<span class="menu-desktop--item-icon" aria-hidden="true">
+												{% include 'icon-chevron.svg' %}
+											</span>
+										</button>
 
-									<span class="menu-desktop--item-icon" aria-hidden="true">
-										{% include 'icon-chevron.svg' %}
-									</span>
-								</button>
+										{%- comment -%} Desktop Menu Dropdown {%- endcomment -%}
+										{% include 'menu-desktop-dropdown' with menu: menu_item %}
+									</li>
 
-								{%- comment -%}
-
-								Menu Desktop Dropdown Start
-
-								{%- endcomment -%}
-
-								{% include 'menu-desktop-dropdown' with menu: menu_item %}
-
-								{%- comment -%}
-
-								Menu Desktop Dropdown End
-
-								{%- endcomment -%}
-							</li>
-
-
-							{% endif %}
-
+								{% endif %}
 							{% endfor %}
-
 						</ul>
 					</div>
-
-					{%- comment -%}
-
-					Tablet Menu End
-
-					{%- endcomment -%}
-
 				</div>
 			</div>
-
-			{%- comment -%}
-
-			Mobile Menu Start
-
-			{%- endcomment -%}
-
+			{%- comment -%} Mobile Menu {%- endcomment -%}
 			<div class="menu-mobile" v-on-clickaway="clickedAway">
 
 				<div class="row">
@@ -368,26 +247,43 @@
 
 					</div>
 				</div>
-
+				{%- comment -%} Mobile Menu Dropdown {%- endcomment -%}
 				{% include 'menu-mobile-dropdown' %}
-
+				{%- comment -%} Mini Cart Dropdown {%- endcomment -%}
 				{% include 'mini-cart' %}
-
 			</div>
-
-			{%- comment -%}
-
-			Mobile Menu End
-
-			{%- endcomment -%}
 		</div>
 	</nav>
-
 </header>
 
 {% schema %}
 {
 	"name": "Header",
+	"blocks": [
+		{
+			"name": "Menu Advertisement",
+			"type": "ad",
+			"limit": 4,
+			"settings": [
+				{
+					"id": "image",
+					"type": "image_picker",
+					"label": "Image"
+				},
+				{
+					"id": "url",
+					"type": "url",
+					"label": "Link to Product or Collection."
+				},
+				{
+					"id": "description",
+					"type": "text",
+					"label": "SEO",
+					"info": "Description of ad."
+				}
+			]
+		}
+	],
 	"settings": [
 		{
 			"type": "image_picker",
@@ -397,33 +293,8 @@
 		{
 			"type": "link_list",
 			"id": "main_linklist",
-			"label": "Menu",
-			"default": "main-menu"
-		}
-	],
-	"blocks": [
-		{
-			"name": "Menu Advertisement",
-			"type": "ad",
-			"limit": 4,
-			"settings": [
-				{
-					"id": "ad_image",
-					"type": "image_picker",
-					"label": "Image"
-				},
-				{
-					"id": "ad_url",
-					"type": "url",
-					"label": "Link to Product or Collection."
-				},
-				{
-					"id": "ad_description",
-					"type": "text",
-					"label": "SEO",
-					"info": "Description of ad."
-				}
-			]
+			"default": "main-menu",
+			"label": "Menu"
 		}
 	]
 }

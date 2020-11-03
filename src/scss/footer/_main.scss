@@ -1,3 +1,35 @@
 .footer {
+    padding-top: 4.375rem;
+    padding-bottom: 1.875rem;
     background: $footer--color-background;
+    &--heading {
+        display: block;
+        font-family: $cousine-regular, sans-serif;
+        font-size: 1rem;
+        color: $footer--color-primary;
+        text-transform: uppercase;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid darken($color: $footer--color-primary, $amount: 50% );
+    }
+    &--links {
+        list-style: none;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: .875rem;
+        color: $footer--color-primary;
+
+        &-link {
+            padding-bottom: .8rem;
+            a {
+                display: block;
+                text-decoration: none;
+                text-transform: capitalize;
+                color: $footer--color-primary;
+                &:hover {
+                    text-decoration: none;
+                    color: $footer--color-primary;
+                }
+            }
+        }
+    }
 }

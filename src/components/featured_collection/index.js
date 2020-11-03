@@ -41,31 +41,31 @@ class FeaturedCollection {
 
                 },
                 lazyLoad(e){
+                    const page = 2;
                     const totalPages = e.currentTarget.dataset.totalPages;
                     const collection = e.currentTarget.dataset.collection;
-                    const url = e.currentTarget.dataset.nextUrl.split('page=')[0];
+                    const url = e.currentTarget.dataset.url.split('page=')[0];
                     const featuredCollection = document.querySelector(`.${collection}`);
 
-                    let nextPage = 2;
 
                     this.loading = true;
 
-                    fetch(`https://fengostore.myshopify.com${url}page=${nextPage}`, {
+                    fetch(`${url}page=${page}`, {
                         method: 'GET',
                         headers: {'Content-Type': 'text/html'}
                     })
                     .then(res => res.text())
-                    .then(html => {
-                        const shadowDOM = document.createElement('div');
-                        shadowDOM.innerHTML = html;
-                        const productNodes = shadowDOM.querySelectorAll('.featured-collection--product');
-                        const products = document.createDocumentFragment();
+                    .then(data => {
+                        const div = document.createElement('div');
+                        div.innerHTML = data;
+                        const nodes = div.querySelectorAll('.featured-collection--product');
+                        const fragment = document.createDocumentFragment();
 
-                        productNodes.forEach(productNode => products.appendChild(productNode));
+                        nodes.forEach(node => fragment.appendChild(node));
 
-                        featuredCollection.appendChild(products);
+                        featuredCollection.appendChild(fragment);
 
-                        nextPage < totalPages ? nextPage++ : this.disabled = true;
+                        page < totalPages ? page++ : this.disabled = true;
 
                         this.loading = false;
                     });
@@ -75,8 +75,8 @@ class FeaturedCollection {
                 }
             },
             beforeMount() {
-                self.appData.forEach((collection, i) => {
-                    i === 0 ? this.collections[collection] = true : this.collections[collection] = false;
+                self.appData.forEach((collection, index) => {
+                    index === 0 ? this.collections[collection] = true : this.collections[collection] = false;
                 });
             }
         });

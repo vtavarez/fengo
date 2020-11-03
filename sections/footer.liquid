@@ -1,3 +1,110 @@
 <section class="footer">
-
+    <div class="container">
+        <div class="row">
+            {% for block in section.blocks %}
+                <div class="col-12 col-md-3">
+                    <h3 class="footer--heading">{{ block.settings.heading }}</h3>
+                    {% if block.type == 'links' %}
+                        <ul class="footer--links">
+                            {% for link in linklists[block.settings.footer_linklist].links %}
+                                <li class="footer--links-link">
+                                    <a href="{{ link.url }}">{{ link.title | downcase }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </section>
+
+{% schema %}
+{
+    "name": "Footer",
+    "blocks": [
+        {
+            "name": "Newsletter",
+            "type": "newsletter",
+            "limit": 1,
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "label": "Newsletter Heading"
+                },
+                {
+                    "id": "cta",
+                    "type": "text",
+                    "label": "Call to Action"
+                }
+            ]
+        },
+        {
+            "name": "Links",
+            "type": "links",
+            "limit": 3,
+            "settings": [
+                {
+                    "id": "heading",
+                    "type": "text",
+                    "default": "Customer Service",
+                    "label": "Footer Links Heading"
+                },
+                {
+                    "id": "footer_linklist",
+                    "type": "link_list",
+                    "label": "Link List"
+                }
+            ]
+        }
+    ],
+    "settings": [
+        {
+            "id": "visa",
+            "type": "checkbox",
+            "label": "Visa"
+        },
+        {
+            "id": "mastercard",
+            "type": "checkbox",
+            "label": "Mastercard"
+        },
+        {
+            "id": "discover",
+            "type": "checkbox",
+            "label": "Discover"
+        },
+        {
+            "id": "amex",
+            "type": "checkbox",
+            "label": "American Express"
+        },
+        {
+            "id": "facebook",
+            "type": "text",
+            "label": "Facebook"
+        },
+        {
+            "id": "instagram",
+            "type": "text",
+            "label": "Instagram"
+        },
+        {
+            "id": "twitter",
+            "type": "text",
+            "label": "Twitter"
+        },
+        {
+            "id": "pintrest",
+            "type": "text",
+            "label": "Pintrest"
+        },
+        {
+            "id": "youtube",
+            "type": "text",
+            "label": "Youtube"
+        }
+    ]
+}
+{% endschema %}
