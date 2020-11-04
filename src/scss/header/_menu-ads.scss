@@ -58,6 +58,7 @@
 .menu-ads--primary {
     display: none;
     height: 100%;
+    min-height: 16.43rem;
 
     @include media-breakpoint-up(lg) {
         display: block;

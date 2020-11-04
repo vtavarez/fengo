@@ -3,8 +3,8 @@
         <div class="row">
             {% for block in section.blocks %}
                 <div class="col-12 col-md-3">
-                    <h3 class="footer--heading">{{ block.settings.heading }}</h3>
                     {% if block.type == 'links' %}
+                        <h3 class="footer--heading">{{ block.settings.heading }}</h3>
                         <ul class="footer--links">
                             {% for link in linklists[block.settings.footer_linklist].links %}
                                 <li class="footer--links-link">
@@ -26,33 +26,54 @@
             <div class="col-12 col-md-6">
                 <div class="footer--cards">
                     {% unless section.settings.visa == blank %}
-                        <div class="footer--card">
-                            {% include 'icon-card-visa.svg' %}
+                        <div class="footer--cards-card">
+                            {{ 'visa.jpg' | asset_img_url: 'master' | img_tag }}
                         </div>
                     {% endunless %}
                     {% unless section.settings.mastercard == blank %}
-                        <div class="footer--card">
-                            {% include 'icon-card-mastercard.svg' %}
+                        <div class="footer--cards-card">
+                            {{ 'mastercard.jpg' | asset_img_url: 'master' | img_tag }}
                         </div>
                     {% endunless %}
                     {% unless section.settings.discover == blank %}
-                        <div class="footer--card">
-                            {% include 'icon-card-discover.svg' %}
+                        <div class="footer--cards-card">
+                            {{ 'discover.jpg' | asset_img_url: 'master' | img_tag }}
                         </div>
                     {% endunless %}
                     {% unless section.settings.amex == blank %}
-                        <div class="footer--card">
-                            {% include 'icon-card-amex.svg' %}
+                        <div class="footer--cards-card">
+                            {{ 'amex.jpg' | asset_img_url: 'master' | img_tag }}
                         </div>
                     {% endunless %}
                 </div>
+                <small class="footer--copyright">&#169 {{ 'now' | date: "%Y" }} {{ shop.name }}. all rights reserved.</small>
             </div>
             <div class="col-12 col-md-6">
                 <div class="footer--socials">
                     {% unless section.settings.facebook == blank %}
-                        <div class="footer--social">
-                            
-                        </div>
+                        <a class="footer--socials-social" href="{{ section.settings.facebook }}">
+                            {% include 'icon-facebook.svg' %}
+                        </a>
+                    {% endunless %}
+                    {% unless section.settings.instagram == blank %}
+                        <a class="footer--socials-social" href="{{ section.settings.instagram }}">
+                            {% include 'icon-instagram.svg' %}
+                        </a>
+                    {% endunless %}
+                    {% unless section.settings.twitter == blank %}
+                        <a class="footer--socials-social" href="{{ section.settings.twitter }}">
+                            {% include 'icon-twitter.svg' %}
+                        </a>
+                    {% endunless %}
+                    {% unless section.settings.pinterest == blank %}
+                        <a class="footer--socials-social" href="{{ section.settings.pinterest }}">
+                            {% include 'icon-pinterest.svg' %}
+                        </a>
+                    {% endunless %}
+                    {% unless section.settings.youtube == blank %}
+                        <a class="footer--socials-social" href="{{ section.settings.youtube }}">
+                            {% include 'icon-youtube.svg' %}
+                        </a>
                     {% endunless %}
                 </div>
             </div>
@@ -69,11 +90,6 @@
             "type": "newsletter",
             "limit": 1,
             "settings": [
-                {
-                    "id": "heading",
-                    "type": "text",
-                    "label": "Newsletter Heading"
-                },
                 {
                     "id": "cta",
                     "type": "text",
@@ -123,33 +139,28 @@
         },
         {
             "id": "facebook",
-            "type": "text",
-            "label": "Facebook",
-            "default": "facebook.com"
+            "type": "url",
+            "label": "Facebook"
         },
         {
             "id": "instagram",
-            "type": "text",
-            "label": "Instagram",
-            "default": "instagram.com"
+            "type": "url",
+            "label": "Instagram"
         },
         {
             "id": "twitter",
-            "type": "text",
-            "label": "Twitter",
-            "default": "twitter.com"
+            "type": "url",
+            "label": "Twitter"
         },
         {
-            "id": "pintrest",
-            "type": "text",
-            "label": "Pintrest",
-            "default": "pintrest.com"
+            "id": "pinterest",
+            "type": "url",
+            "label": "Pinterest"
         },
         {
             "id": "youtube",
-            "type": "text",
-            "label": "Youtube",
-            "default": "youtube.com"
+            "type": "url",
+            "label": "Youtube"
         }
     ]
 }
