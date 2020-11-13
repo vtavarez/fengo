@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "bootstrap": "4.5.3",
-    "lazysizes": "^5.2.2",
     "swiper": "6.3.4",
     "vue-awesome-swiper": "^4.1.1",
     "vue-clickaway": "^2.2.2"

@@ -15,10 +15,6 @@ const Header = new Vue({
         desktop: {
             menu: null,
             cart: false
-        },
-        minicart: {
-            disabled: true,
-            quantity: 1,
         }
     },
     delimiters: ['${', '}'],
@@ -95,17 +91,6 @@ const Header = new Vue({
             this.desktop.cart = false;
             if(e !== 'search') this.search.term = '';
             if (this.desktop.menu) this.desktopMenuOpen(false);
-        },
-        increaseQuantity(e) {
-            this.minicart.quantity++;
-            this.minicart.disabled = false;
-        },
-        decreaseQuantity(e) {
-            if (this.minicart.quantity < 2) {
-                this.minicart.disabled = true;
-            } else {
-                this.minicart.quantity--;
-            }
         },
         togglePanel(e) {
             const panelIcons = e.currentTarget.querySelectorAll('.menu-mobile--item-expand-icon');

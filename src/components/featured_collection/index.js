@@ -1,3 +1,4 @@
+import MiniCart from '../mini_cart';
 class FeaturedCollection {
     constructor(id, data) {
         this.sectionId = id;
@@ -23,7 +24,8 @@ class FeaturedCollection {
             data: {
                 collections: {},
                 loading: false,
-                disabled: false
+                disabled: false,
+                minicart: new MiniCart()
             },
             methods: {
                 collectionSelected(e) {
@@ -35,10 +37,8 @@ class FeaturedCollection {
                     this.$forceUpdate();
                 },
                 addProductToCart(e){
-                    const productId = e.currentTarget.dataset.productId;
-                    const productTitle = e.currentTarget.dataset.productTitle;
-                    const productImage = e.currentTarget.dataset.productImage;
-
+                    const product = e.currentTarget.dataset.product;
+                    this.minicart.addProduct(JSON.parse(product), 1);
                 },
                 lazyLoad(e){
                     const page = 2;

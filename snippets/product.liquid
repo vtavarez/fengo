@@ -44,15 +44,26 @@
                 </div>
             </div>
         </div>
-        {%- comment -%} Color Options {%- endcomment -%}
+        {%- comment -%} Options {%- endcomment -%}
         {% if product.options.size > 0 %}
             {% for option in product.options %}
+                {% unless option != size %}
+                    <div class="product--options-sizes">
+                        {% for variant in product.variants %}
+                            
+                        {% endfor %}
+                    </div>
+                {% endunless %}
                 {% unless option != color %}
                     {%- comment -%} FUTURE APP TBD {%- endcomment -%}
                 {% endunless %}
             {% endfor %}
         {% endif %}
         {%- comment -%} Badge {%- endcomment -%}
+        {% assign days = 7 %}
+        {% assign period_time = days | times: 24 | times: 60 | times: 60 %}
+        {% assign date_now = 'now' | date:'%s' %}
+        {% assign date_finished = product.published_at | date:'%s' | plus: period_time | date:'%s' %}
         {% if product.available == false %}
             <div class="product--badge">
                 out of stock
@@ -62,15 +73,11 @@
                 {% assign percentage = product.compare_at_price
                     | minus: product.price
                     | times: 100
-                    | divided_by: product.compare_at_price
+                    | divided_by: product.compare_at_price_max
                 %}
                 {{ percentage | prepend: '-' | append: '%' }}
             </div>
         {% elsif date_finished > date_now %}
-            {% assign days = 7 %}
-            {% assign period_time = days | times: 24 | times: 60 | times: 60 %}
-            {% assign date_now = 'now' | date:'%s' %}
-            {% assign date_finished = product.published_at | date:'%s' | plus: period_time | date:'%s' %}
             <div class="product--badge-new">
                 new
             </div>
@@ -87,9 +94,7 @@
                         {% endif %}
                         aria-label="add to cart"
                         class="product--buttons-button"
-                        data-product="{{ product.featured_image | img_url: '90x104' }}"
-                        data-product-title="{{ product.title }}"
-                        data-product-id="{{ product.id }}"
+                        data-product="{{ product | json | escape }}"
                         v-on:click="addProductToCart"
                     >
                         add to bag
