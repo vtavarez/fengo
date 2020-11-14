@@ -1,12 +1,29 @@
 <div
     v-on:keydown="trapFocus"
-    v-on:click.stop
     v-bind:class="miniCartActive"
     class="minicart"
 >
     <div class="container">
         <p class="minicart--title">Recently added item(s)</p>
         <div class="minicart--products"></div>
+        <div class="minicart--totals">
+            <div class="container no-padding">
+                <div class="row no-gutters">
+                    <div class="col-6">
+                        <p>
+                            shipping:
+                            <span class="minicart--totals-shipping">$0</span>
+                        </p>
+                    </div>
+                    <div class="col-6">
+                        <p>
+                            total:
+                            <span class="minicart--totals-cart">$0.00</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="minicart--checkout-links">
             <div class="container">
                 <div class="row">

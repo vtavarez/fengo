@@ -96,6 +96,7 @@
         fill: $minicart--color-primary;
         top: calc(50% - 4px);
         left: calc(50% - 4px);
+        pointer-events: none;
     }
 }
 
@@ -139,8 +140,8 @@
 
 .minicart--quantity {
     color: $minicart--color-primary;
-    width: 60px;
-    height: 35px;
+    width: 3.75rem;
+    height: 2.187rem;
     text-align: center;
     border: 1px solid $minicart--color-primary;
     font-size: 1rem;
@@ -149,19 +150,21 @@
     padding: 0;
     box-shadow: none;
     background: $background-color;
+    direction: rtl;
 
     @media screen and (min-width: 375px){
-        width: 90px
+        width: 5.62rem;
     }
 
     @media screen and (min-width: 414px){
-        width: 105px
+        width: 6.56rem;
     }
 
     @include media-breakpoint-up(md){
         font-size: .8rem;
-        width: 75px;
-        height: 30px;
+        width: 4.68rem;
+        height: 1.875rem;
+        padding-right: 1rem;
     }
 }
 
@@ -183,11 +186,28 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        pointer-events: none;
     }
 
 
     @include media-breakpoint-up(md){
         width: 30px;
         height: 30px;
+    }
+}
+
+.minicart--totals {
+    font-family: $cousine-bold, sans-serif;
+    font-size: 1rem;
+    text-transform: uppercase;
+    color: $minicart--color-secondary;
+
+    &-shipping,
+    &-cart {
+        color: $minicart--color-primary;
+    }
+
+    @include media-breakpoint-up(md){
+        font-size: .875rem;
     }
 }
