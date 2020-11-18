@@ -12,7 +12,12 @@ class FeaturedCollection {
         };
         this.tabs.addEventListener('click', this.selectedCollection.bind(this));
         this.collections.addEventListener('submit', this.addProductToCart.bind(this));
-        this.collections.addEventListener('click', this.lazyLoad.bind(this));
+        this.collections.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(e.target.classList[0] == 'featured-collection--collections-collection-lazyload-button') {
+                this.lazyLoad(e);
+            }
+        });
     }
 
     toggleCollection(){
@@ -47,11 +52,12 @@ class FeaturedCollection {
         const page = 2;
         const totalPages = e.target.dataset.totalPages;
         const url = e.target.dataset.url.split('page=')[0];
-        const featuredCollection = this.collection[this.state.activeCollection].firstElementChild;
+        const button = e.target;
+        const loader = e.target.nextElementSibling;
+        const collection = this.collection[this.state.activeCollection].firstElementChild;
 
-
-        e.target.classList.toggle('featured-collection--collections-collection-lazyload-active');
-        e.target.nextElementSibling.classList.toggle('featured-collection--collections-collection-lazyload-active');
+        button.classList.toggle('featured-collection--collections-collection-lazyload-active');
+        loader.classList.toggle('featured-collection--collections-collection-lazyload-active');
 
         fetch(`${url}page=${page}`, {
             method: 'GET',
@@ -59,19 +65,20 @@ class FeaturedCollection {
         })
         .then(res => res.text())
         .then(data => {
+            const fragment = new DocumentFragment();
             const div = document.createElement('div');
             div.innerHTML = data;
-            const nodes = div.querySelectorAll('.featured-collection--collections-collection-product');
-            const fragment = new DocumentFragment();
 
-            nodes.forEach(node => fragment.appendChild(node));
+            div
+            .querySelectorAll('.featured-collection--collections-collection-product')
+            .forEach(node => fragment.appendChild(node));
 
-            featuredCollection.appendChild(fragment);
+            collection.appendChild(fragment);
 
-            page < totalPages ? page++ : e.target.setAttribute('disabled','disabled');
+            page < totalPages ? page++ : button.setAttribute('disabled','disabled');
 
-            e.target.nextElementSibling.classList.toggle('featured-collection--collections-collection-lazyload-active');
-            e.target.classList.toggle('featured-collection--collections-collection-lazyload-active');
+            loader.classList.toggle('featured-collection--collections-collection-lazyload-active');
+            button.classList.toggle('featured-collection--collections-collection-lazyload-active');
         });
     }
 }

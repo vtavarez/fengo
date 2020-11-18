@@ -27,7 +27,7 @@
                                 <div class="row no-margin">
                                     {% for product in collections[block.settings.collection].products %}
                                         <div class="featured-collection--collections-collection-product col-12 col-md-4 col-lg-3">
-                                            {% include 'product' with product: product %}
+                                            {% include 'product-grid' with product: product %}
                                         </div>
                                     {% endfor %}
                                 </div>
