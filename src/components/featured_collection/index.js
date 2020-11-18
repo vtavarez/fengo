@@ -1,86 +1,79 @@
 import MiniCart from '../mini_cart';
 class FeaturedCollection {
-    constructor(id, data) {
-        this.sectionId = id;
-        this.appType = 'vue-featured-collection';
-        this.appData = data;
-        this._appInstance = null;
-        this._mountingNode = `#vue-featured-collection-${id}`;
+    constructor() {
+        this.tabs = document.querySelector('.featured-collection--tabs');
+        this.collections = document.querySelector('.featured-collection--collections');
+        this.tab = this.tabs.children;
+        this.collection = this.collections.children;
+        this.state = {
+            activeCollection: 0,
+            loading: false,
+            disabled: false
+        };
+        this.tabs.addEventListener('click', this.selectedCollection.bind(this));
+        this.collections.addEventListener('submit', this.addProductToCart.bind(this));
+        this.collections.addEventListener('click', this.lazyLoad.bind(this));
     }
 
-    getSectionId() {
-        return this.sectionId;
+    toggleCollection(){
+        this
+        .tab[this.state.activeCollection]
+        .classList
+        .toggle('featured-collection--tabs-tab-active');
+        this
+        .collection[this.state.activeCollection]
+        .classList
+        .toggle('featured-collection--collections-collection-active');
     }
 
-    kill() {
-        this._appInstance.kill();
+    selectedCollection(e) {
+        e.stopPropagation();
+        const selectedCollection = e.target.dataset.collection;
+        if(selectedCollection !== this.state.activeCollection){
+            this.toggleCollection();
+            this.state.activeCollection = selectedCollection;
+            this.toggleCollection();
+        }
     }
 
-    init() {
-        const self = this;
+    addProductToCart(e){
+        e.preventDefault();
+        console.log(e.target);
+        // const product = e.target.dataset.product;
+        // MiniCart.addProduct(JSON.parse(product), 1);
+    }
 
-        this._appInstance = new Vue({
-            el: this._mountingNode,
-            data: {
-                collections: {},
-                loading: false,
-                disabled: false,
-                minicart: new MiniCart()
-            },
-            methods: {
-                collectionSelected(e) {
-                    const selectedCollection = e.target.dataset.collection;
-                    for(let collection in this.collections){
-                        this.collections[collection] = false;
-                    }
-                    this.collections[selectedCollection] = true;
-                    this.$forceUpdate();
-                },
-                addProductToCart(e){
-                    const product = e.currentTarget.dataset.product;
-                    this.minicart.addProduct(JSON.parse(product), 1);
-                },
-                lazyLoad(e){
-                    const page = 2;
-                    const totalPages = e.currentTarget.dataset.totalPages;
-                    const collection = e.currentTarget.dataset.collection;
-                    const url = e.currentTarget.dataset.url.split('page=')[0];
-                    const featuredCollection = document.querySelector(`.${collection}`);
+    lazyLoad(e){
+        const page = 2;
+        const totalPages = e.target.dataset.totalPages;
+        const url = e.target.dataset.url.split('page=')[0];
+        const featuredCollection = this.collection[this.state.activeCollection].firstElementChild;
 
 
-                    this.loading = true;
+        e.target.classList.toggle('featured-collection--collections-collection-lazyload-active');
+        e.target.nextElementSibling.classList.toggle('featured-collection--collections-collection-lazyload-active');
 
-                    fetch(`${url}page=${page}`, {
-                        method: 'GET',
-                        headers: {'Content-Type': 'text/html'}
-                    })
-                    .then(res => res.text())
-                    .then(data => {
-                        const div = document.createElement('div');
-                        div.innerHTML = data;
-                        const nodes = div.querySelectorAll('.featured-collection--product');
-                        const fragment = document.createDocumentFragment();
+        fetch(`${url}page=${page}`, {
+            method: 'GET',
+            headers: {'Content-Type': 'text/html'}
+        })
+        .then(res => res.text())
+        .then(data => {
+            const div = document.createElement('div');
+            div.innerHTML = data;
+            const nodes = div.querySelectorAll('.featured-collection--collections-collection-product');
+            const fragment = new DocumentFragment();
 
-                        nodes.forEach(node => fragment.appendChild(node));
+            nodes.forEach(node => fragment.appendChild(node));
 
-                        featuredCollection.appendChild(fragment);
+            featuredCollection.appendChild(fragment);
 
-                        page < totalPages ? page++ : this.disabled = true;
+            page < totalPages ? page++ : e.target.setAttribute('disabled','disabled');
 
-                        this.loading = false;
-                    });
-                },
-                kill() {
-                    this.$destroy();
-                }
-            },
-            beforeMount() {
-                self.appData.forEach((collection, index) => {
-                    index === 0 ? this.collections[collection] = true : this.collections[collection] = false;
-                });
-            }
+            e.target.nextElementSibling.classList.toggle('featured-collection--collections-collection-lazyload-active');
+            e.target.classList.toggle('featured-collection--collections-collection-lazyload-active');
         });
     }
 }
 
-export default FeaturedCollection;
+export default new FeaturedCollection();

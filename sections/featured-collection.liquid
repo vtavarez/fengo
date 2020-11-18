@@ -1,87 +1,55 @@
-{% assign app_type = 'vue-featured-collection' %}
-
-<section class="featured-collection"
-         data-app-id="{{ section.id }}"
-         data-app-type="{{ app_type }}"
-         id="vue-featured-collection-{{ section.id }}"
->
-
-    <script id="{{ section.id }}-{{ app_type }}">
-        window
-            .theme
-            .vue
-            .availableApps
-            .push({
-                type: "{{ app_type }}",
-                id: "{{ section.id }}",
-                data: [{% for block in section.blocks %}{{ collections[block.settings.collection].title | json }},{% endfor %}]
-            });
-    </script>
-
+<section class="featured-collection">
     <div class="container">
         <div class="row">
             {%- comment -%} Tabs {%- endcomment -%}
             <div class="col-12">
-                <ul class="featured-collection--tabs" v-on:click="collectionSelected">
+                <ul class="featured-collection--tabs">
                     {% for block in section.blocks %}
-
                         {% assign collection_title = collections[block.settings.collection].title %}
-
-                        <li class="featured-collection--tabs-tab"
-                            data-collection="{{ collection_title }}"
-                            role="tab" tabindex="0"
-                            v-bind:aria-selected="collections['{{ collection_title }}']"
-                            v-bind:class="{ 'featured-collection--tabs-tab-active': collections['{{ collection_title }}'] }"
+                        <li class="featured-collection--tabs-tab {% if forloop.first %} featured-collection--tabs-tab-active {% endif %}"
+                            data-collection="{{ forloop.index0 }}"
+                            role="tab"
+                            tabindex="0"
                             {{ block.shopify_attributes }}
                         >
                             {{ collection_title }}
                         </li>
-
                     {% endfor %}
                 </ul>
             </div>
             {%- comment -%} Products {%- endcomment -%}
             <div class="col-12">
-                {% for block in section.blocks %}
-                    {% assign collection_title = collections[block.settings.collection].title %}
-
-                    <div class="featured-collection--products"
-                         v-bind:class="{ 'featured-collection--products-active': collections['{{ collection_title }}'] }"
-                         {{ block.shopify_attributes }}
-                    >
-                        {% paginate collections[block.settings.collection].products by section.settings.products_per_page %}
-                            <div class="{{ collection_title | downcase }} row no-margin">
-                                {% for product in collections[block.settings.collection].products %}
-                                    <div class="featured-collection--product col-12 col-md-4 col-lg-3">
-                                        {% include 'product' with product: product %}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                            {% unless paginate.parts.size < 1 %}
-                            <div class="featured-collection--products-lazyload">
-                                <button
-                                    class="featured-collection--products-lazyload-button"
-                                    data-collection="{{ collection_title | downcase }}"
-                                    data-total-pages="{{ paginate.pages }}"
-                                    data-url="{{ paginate.next.url }}"
-                                    v-bind:aria-disabled="disabled"
-                                    v-bind:disabled="disabled"
-                                    v-on:click.stop="lazyLoad"
-                                    v-bind:class="{ 'featured-collection--products-lazyload-active': !loading }"
-                                >
-                                    show more
-                                </button>
-                                <div
-                                    class="featured-collection--products-lazyload-loader"
-                                    v-bind:class="{ 'featured-collection--products-lazyload-active': loading }"
-                                >
-                                    {% include 'icon-loader.svg' %}
+                <div class="featured-collection--collections">
+                    {% for block in section.blocks %}
+                        {% assign collection_title = collections[block.settings.collection].title %}
+                        <div class="featured-collection--collections-collection {% if forloop.first %} featured-collection--collections-collection-active {% endif %}" {{ block.shopify_attributes }}>
+                            {% paginate collections[block.settings.collection].products by section.settings.products_per_page %}
+                                <div class="row no-margin">
+                                    {% for product in collections[block.settings.collection].products %}
+                                        <div class="featured-collection--collections-collection-product col-12 col-md-4 col-lg-3">
+                                            {% include 'product' with product: product %}
+                                        </div>
+                                    {% endfor %}
                                 </div>
-                            </div>
-                            {% endunless %}
-                        {% endpaginate %}
-                    </div>
-                {% endfor %}
+                                {% unless paginate.parts.size < 1 %}
+                                    <div class="featured-collection--collections-collection-lazyload">
+                                        <button
+                                            class="featured-collection--collections-collection-lazyload-button featured-collection--collections-collection-lazyload-active"
+                                            data-collection="{{ collection_title | downcase }}"
+                                            data-total-pages="{{ paginate.pages }}"
+                                            data-url="{{ paginate.next.url }}"
+                                        >
+                                            show more
+                                        </button>
+                                        <div class="featured-collection--collections-collection-lazyload-loader">
+                                            {% include 'icon-loader.svg' %}
+                                        </div>
+                                    </div>
+                                {% endunless %}
+                            {% endpaginate %}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>

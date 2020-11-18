@@ -32,7 +32,7 @@ class MiniCart {
         this.render();
     }
 
-    addProduct(product, qty){
+    static addProduct(product, qty){
         if(!this.state.cart[product.id]){
             this.state.total += (product.price * qty);
             this.state.cart[product.id] = product;
@@ -52,7 +52,7 @@ class MiniCart {
         }
     }
 
-    removeProduct(productId){
+    static removeProduct(productId){
         if(this.state.cart[productId]){
             this.state.total -= (this.state.cart[productId].price * this.state.cart[productId].quantity);
             delete this.state.cart[productId];
@@ -71,7 +71,7 @@ class MiniCart {
         }
     }
 
-    updateProduct(productId, quantity){
+    static updateProduct(productId, quantity){
         if(this.state.cart[productId]){
             if(quantity > this.state.cart[productId].quantity){
                 this.state.total += (this.state.cart[productId].price * (quantity - this.state.cart[productId].quantity));
@@ -97,19 +97,19 @@ class MiniCart {
         }
     }
 
-    increaseQuantity(productId){
+    _increaseQuantity(productId){
         const quantity = this.state.cart[productId].quantity + 1;
         this.updateProduct(productId, quantity);
     }
 
-    decreaseQuantity(productId){
+    _decreaseQuantity(productId){
         if(this.state.cart[productId].quantity > 1){
             const quantity = this.state.cart[productId].quantity - 1;
             this.updateProduct(productId, quantity);
         }
     }
 
-    render(){
+    _render(){
         const cart = Object.values(this.state.cart);
         let products = '';
 
@@ -181,16 +181,26 @@ class MiniCart {
                             </div>
                             <p class="minicart--product-price">
                                 ${product.price < product.compare_at_price_max ? (
-                                    `<span aria-label="product price" class="strikeout-price">${this.currency.format(product.compare_at_price_max * 0.01)}</span>
-                                    <span aria-label="product sale price" class="price">${this.currency.format(product.price * 0.01)}</span>`
+                                    `<span aria-label="product price" class="strikeout-price">
+                                        ${this.currency.format(product.compare_at_price_max * 0.01)}
+                                    </span>
+                                    <span aria-label="product sale price" class="price">
+                                        ${this.currency.format(product.price * 0.01)}
+                                    </span>`
                                 ) : (
-                                    `<span aria-label="product sale price" class="price">${this.currency.format(product.price * 0.01)}</span>`
+                                    `<span aria-label="product sale price" class="price">
+                                        ${this.currency.format(product.price * 0.01)}
+                                    </span>`
                                     )
                                 }
                             </p>
                         </div>
                         <div class="col-2">
-                            <button aria-label="remove product" class="minicart--remove-icon" data-product-id="${product.id}">
+                            <button
+                                aria-label="remove product"
+                                class="minicart--remove-icon"
+                                data-product-id="${product.id}"
+                            >
                                 <span aria-hidden="true">
                                     <svg
                                         version="1.1"
