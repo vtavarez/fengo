@@ -8,10 +8,10 @@
                 <img class="product--image" src="{{ product.featured_image | img_url: '380x' }}" alt="{{ product.title | escape }}">
             </picture>
             <div class="product--details">
-                <div class="container">
-                    <div class="row">
+                <div class="container no-padding">
+                    <div class="row no-gutters">
                         {%- comment -%} Title {%- endcomment -%}
-                        <div class="col-6">
+                        <div class="col-6 col-md-12">
                             <div class="product--details-title">
                                 {% assign product_details = product.title | split: ' | ' %}
                                 {% assign product_title = product_details[1] %}
@@ -19,8 +19,8 @@
                             </div>
                         </div>
                         {%- comment -%} Price {%- endcomment -%}
-                        <div class="col-6">
-                            <div class="product--details-price">
+                        <div class="col-6 col-md-12">
+                            <div class="product--details-price-{{ product.id }} product--details-price">
                                 {% if product.price_varies and product.compare_at_price_varies %}
                                     {% if product.price < product.compare_at_price_max %}
                                         <span class="product--details-price-compare">
@@ -36,6 +36,8 @@
                                             {{ product.compare_at_price | money_without_trailing_zeros }}
                                         </span>
                                         {{ product.price | money_without_trailing_zeros }}
+                                    {% elsif product.price_varies %}
+                                        {{ product.price_min | money_without_trailing_zeros }}-{{ product.price_max | money_without_trailing_zeros }}
                                     {% else %}
                                         {{ product.price | money_without_trailing_zeros }}
                                     {% endif %}
@@ -71,38 +73,33 @@
         </a>
         {%- comment -%} Options {%- endcomment -%}
         {% if product.available and product.options.size > 0 %}
-            {% for option in product.options %}
-                {% unless option != 'Size' %}
-                    {% assign used = '' %}
-                    <div class="product--options-sizes">
-                        {% for variant in product.variants %}
-                            {% unless used contains variant.option1 or variant.available == false %}
-                                <label class="product--options-sizes-size">
-                                    <input id="size" type="radio" name="size" value="{{ variant.option1 }}">
-                                    <span>
-                                        {{ variant.option1 }}
-                                    </span>
-                                </label>
-                                {% capture used %}{{ used }} {{ variant.option1 }}{% endcapture %}
-                            {% endunless %}
-                        {% endfor %}
-                    </div>
-                {% endunless %}
-                {% unless option != 'Color' %}
-                    {% assign used = '' %}
-                    <div class="product--options-colors">
-                        {% for variant in product.variants %}
-                            {% unless used contains variant.option2 or variant.available == false %}
-                                <label class="product--options-colors-color">
-                                    <input id="color" type="radio" name="color" value="{{ variant.option2 }}">
-                                    <span style="background-color:{{ variant.option2 }};"></span>
-                                </label>
-                                {% capture used %}{{ used }} {{ variant.option2 }}{% endcapture %}
-                            {% endunless %}
-                        {% endfor %}
-                    </div>
-                {% endunless %}
-            {% endfor %}
+            {% unless product.options[0] != 'Size' %}
+                {% assign used = '' %}
+                <div class="product--options-sizes">
+                    {% for variant in product.variants %}
+                        {% unless used contains variant.option1 or variant.available == false %}
+                            <label class="product--options-sizes-size">
+                                <input
+                                    class="product--options-sizes-size-input"
+                                    id="size"
+                                    type="radio"
+                                    name="size"
+                                    value="{{ variant.option1 }}"
+                                    data-id="{{ product.id }}"
+                                    data-variants="{{ product.variants | json | escape }}"
+                                >
+                                <span>
+                                    {{ variant.option1 }}
+                                </span>
+                            </label>
+                            {% capture used %}{{ used }} {{ variant.option1 }}{% endcapture %}
+                        {% endunless %}
+                    {% endfor %}
+                </div>
+            {% endunless %}
+            {% unless product.options[1] != 'Color' %}
+                <div class="product--options-colors-{{ product.id }} product--options-colors"></div>
+            {% endunless %}
         {% endif %}
         {%- comment -%} Buttons {%- endcomment -%}
         <div class="product--buttons">

@@ -54,6 +54,10 @@
     margin-top: 2.56rem;
     line-height: 1.5;
 
+    @include media-breakpoint-up(lg){
+      margin-top: 1.56rem;
+    }
+
     &-title {
       font-family: $merri-regular, sans-serif;
       font-size: .8rem;
@@ -73,6 +77,15 @@
       font-size: 1rem;
       text-align: right;
 
+      @include media-breakpoint-up(md) {
+        font-size: .8rem;
+        text-align: left;
+      }
+
+      @include media-breakpoint-up(lg) {
+        font-size: 1rem;
+      }
+
       &-compare {
         display: block;
         text-decoration: line-through;
@@ -87,20 +100,7 @@
           font-size: .8rem;
         }
       }
-
-      @include media-breakpoint-up(md) {
-        font-size: .8rem;
-      }
-
-      @include media-breakpoint-up(lg) {
-        font-size: 1rem;
-      }
     }
-
-    @include media-breakpoint-up(lg){
-      margin-top: 1.56rem;
-    }
-
   }
 
   &--badge,
@@ -142,6 +142,11 @@
     line-height: 1.7;
     font-family: $cousine-bold, sans-serif;
 
+    @include media-breakpoint-up(lg){
+      display: none;
+      bottom: 8.25rem;
+    }
+
     &-color,
     &-size {
       position: relative;
@@ -175,11 +180,6 @@
       }
 
     }
-
-    @include media-breakpoint-up(lg){
-      display: none;
-      bottom: 8.25rem;
-    }
   }
 
   &--options-sizes {
@@ -198,6 +198,14 @@
     border: 2px solid $featured-collection--color-secondary;
     padding: 10px 0;
     margin-top: 15px;
+
+    @include media-breakpoint-up(lg) {
+      display: none;
+    }
+
+    &-divider {
+      border-right: 2px solid $featured-collection--color-secondary;
+    }
 
     &-button {
       display: block;
@@ -243,14 +251,6 @@
           }
         }
       }
-    }
-
-    &-divider {
-      border-right: 2px solid $featured-collection--color-secondary;
-    }
-
-    @include media-breakpoint-up(lg) {
-      display: none;
     }
   }
 }

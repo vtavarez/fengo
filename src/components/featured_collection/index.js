@@ -7,15 +7,26 @@ class FeaturedCollection {
         this.collection = this.collections.children;
         this.state = {
             activeCollection: 0,
-            loading: false,
-            disabled: false
+            activeProductPrice: null,
+            activeProductVariants: null,
+            activeProductColors: null,
+            activeProductId: null,
+            selectedVariantSize: null,
+            selectedVariantColor: null,
+            selectedVariant: null
         };
         this.tabs.addEventListener('click', this.selectedCollection.bind(this));
         this.collections.addEventListener('submit', this.addProductToCart.bind(this));
-        this.collections.addEventListener('click', (e) => {
+        this.collections.addEventListener('click', e => {
             e.stopPropagation();
-            if(e.target.classList[0] == 'featured-collection--collections-collection-lazyload-button') {
+            if(e.target.classList[0] === 'featured-collection--collections-collection-lazyload-button'){
                 this.lazyLoad(e);
+            }
+            if(e.target.className === 'product--options-sizes-size-input'){
+                this.selectedProductSize(e);
+            }
+            if(e.target.className === 'product--options-colors-color-input'){
+                this.selectedProductColor(e);
             }
         });
     }
@@ -41,9 +52,86 @@ class FeaturedCollection {
         }
     }
 
+    selectedProductSize(e){
+        this.state.activeProductId = e.target.dataset.id;
+        this.state.activeProductVariants = JSON.parse(e.target.dataset.variants);
+        this.state.selectedVariantSize = e.target.value;
+        const availableColors = this
+        .state
+        .activeProductVariants
+        .reduce((acc,variant) => {
+            if(variant.available && variant.option1 === this.state.selectedVariantSize){
+                acc.push(variant.option2);
+            }
+            return acc;
+        },[]);
+
+        if(!this
+            .state
+            .activeProductColors || this
+            .state
+            .activeProductColors
+            .className !== `product--options-colors-${this.state.activeProductId}`
+        ){
+            this.state.activeProductColors = this
+            .collection[this.state.activeCollection]
+            .querySelector(`.product--options-colors-${this.state.activeProductId}`);
+        }
+
+        const fragment = new DocumentFragment();
+
+        availableColors.forEach(color => {
+            const label = document.createElement('label');
+            label.className = 'product--options-colors-color';
+            label.innerHTML = `
+                <input class="product--options-colors-color-input" id="color" type="radio" name="color" value="${color}">
+                <span style="background-color:${color};"></span>
+            `;
+            fragment.appendChild(label);
+        });
+
+        this.state.activeProductColors.replaceChildren(fragment);
+    }
+
+    selectedProductColor(e){
+        this.state.selectedVariantColor = e.target.value;
+        this.state.selectedVariant = this
+        .state
+        .activeProductVariants
+        .find(variant => {
+            if(variant.option1 === this.state.selectedVariantSize){
+                if(variant.option2 === this.state.selectedVariantColor){
+                    return variant;
+                }
+            }
+        });
+
+        if(!this
+            .state
+            .activeProductPrice || this
+            .state
+            .activeProductPrice
+            .className !== `product--details-price-${this.state.activeProductId}`
+        ){
+            this.state.activeProductPrice = this
+            .collection[this.state.activeCollection]
+            .querySelector(`.product--details-price-${this.state.activeProductId}`)
+        }
+
+        if(this.state.selectedVariant.compare_at_price > 0){
+            this.state.activeProductPrice.innerHTML = `
+                <span class="product--details-price-compare">
+                    ${MiniCart.formatCurrency(this.state.selectedVariant.compare_at_price)}
+                </span>
+                ${MiniCart.formatCurrency(this.state.selectedVariant.price)}
+            `;
+        } else {
+            this.state.activeProductPrice.textContent = MiniCart.formatCurrency(this.state.selectedVariant.price);
+        }
+    }
+
     addProductToCart(e){
         e.preventDefault();
-        console.log(e.target);
         // const product = e.target.dataset.product;
         // MiniCart.addProduct(JSON.parse(product), 1);
     }

@@ -3,18 +3,13 @@ class MiniCart {
         this.cart = document.querySelectorAll('.minicart--products');
         this.shipping = document.querySelectorAll('.minicart--totals-shipping');
         this.total = document.querySelectorAll('.minicart--totals-cart');
-        this.currency = new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            maximumFractionDigits: 2
-        });
         this.state = JSON.parse(localStorage.getItem('minicart')) ?? {
             open: false,
             cart: {},
             total: 0
         };
         this.cart.forEach(cart => {
-            cart.addEventListener('click', (e) => {
+            cart.addEventListener('click', e => {
                 e.stopPropagation();
                 switch (e.target.className) {
                     case 'minicart--remove-icon':
@@ -30,6 +25,16 @@ class MiniCart {
         });
 
         this.render();
+    }
+
+    static formatCurrency($){
+        const currency = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            maximumFractionDigits: 2
+        });
+
+        return currency.format($ * 0.01);
     }
 
     static addProduct(product, qty){
@@ -182,14 +187,14 @@ class MiniCart {
                             <p class="minicart--product-price">
                                 ${product.price < product.compare_at_price_max ? (
                                     `<span aria-label="product price" class="strikeout-price">
-                                        ${this.currency.format(product.compare_at_price_max * 0.01)}
+                                        ${this.formatCurrency(product.compare_at_price_max)}
                                     </span>
                                     <span aria-label="product sale price" class="price">
-                                        ${this.currency.format(product.price * 0.01)}
+                                        ${this.formatCurrency(product.price)}
                                     </span>`
                                 ) : (
                                     `<span aria-label="product sale price" class="price">
-                                        ${this.currency.format(product.price * 0.01)}
+                                        ${this.formatCurrency(product.price)}
                                     </span>`
                                     )
                                 }
@@ -230,7 +235,7 @@ class MiniCart {
         }
 
         this.cart.forEach(cart => { cart.innerHTML = products; });
-        this.total.forEach(total => { total.textContent = this.currency.format(this.state.total * 0.01)});
+        this.total.forEach(total => { total.textContent = this.formatCurrency(this.state.total)});
         localStorage.setItem('minicart', JSON.stringify(this.state));
     }
 }
