@@ -21,14 +21,14 @@
                         {%- comment -%} Price {%- endcomment -%}
                         <div class="col-6 col-md-12">
                             <div class="product--details-price-{{ product.id }} product--details-price">
-                                {% if product.price_varies and product.compare_at_price_varies %}
+                                {% if product.compare_at_price_varies %}
                                     {% if product.price < product.compare_at_price_max %}
                                         <span class="product--details-price-compare">
-                                            {{ product.compare_at_price_min | money_without_trailing_zeros }}-{{ product.compare_at_price_max | money_without_trailing_zeros }}
+                                            {{ product.compare_at_price | money_without_trailing_zeros }}-{{ product.compare_at_price_max | money_without_trailing_zeros }}
                                         </span>
-                                        {{ product.price_min | money_without_trailing_zeros }}-{{ product.price_max | money_without_trailing_zeros }}
+                                        {{ product.price | money_without_trailing_zeros }}-{{ product.price_max | money_without_trailing_zeros }}
                                     {% else %}
-                                        {{ product.price_min | money_without_trailing_zeros }}-{{ product.price_max | money_without_trailing_zeros }}
+                                        {{ product.price | money_without_trailing_zeros }}-{{ product.price_max | money_without_trailing_zeros }}
                                     {% endif %}
                                 {% else %}
                                     {% if product.price < product.compare_at_price_max %}
@@ -37,7 +37,7 @@
                                         </span>
                                         {{ product.price | money_without_trailing_zeros }}
                                     {% elsif product.price_varies %}
-                                        {{ product.price_min | money_without_trailing_zeros }}-{{ product.price_max | money_without_trailing_zeros }}
+                                        {{ product.price | money_without_trailing_zeros }}-{{ product.price_max | money_without_trailing_zeros }}
                                     {% else %}
                                         {{ product.price | money_without_trailing_zeros }}
                                     {% endif %}
@@ -72,34 +72,59 @@
             {% endif %}
         </a>
         {%- comment -%} Options {%- endcomment -%}
-        {% if product.available and product.options.size > 0 %}
-            {% unless product.options[0] != 'Size' %}
-                {% assign used = '' %}
-                <div class="product--options-sizes">
-                    {% for variant in product.variants %}
-                        {% unless used contains variant.option1 or variant.available == false %}
-                            <label class="product--options-sizes-size">
-                                <input
-                                    class="product--options-sizes-size-input"
-                                    id="size"
-                                    type="radio"
-                                    name="size"
-                                    value="{{ variant.option1 }}"
-                                    data-id="{{ product.id }}"
-                                    data-variants="{{ product.variants | json | escape }}"
-                                >
-                                <span>
-                                    {{ variant.option1 }}
-                                </span>
-                            </label>
-                            {% capture used %}{{ used }} {{ variant.option1 }}{% endcapture %}
-                        {% endunless %}
-                    {% endfor %}
-                </div>
-            {% endunless %}
-            {% unless product.options[1] != 'Color' %}
-                <div class="product--options-colors-{{ product.id }} product--options-colors"></div>
-            {% endunless %}
+        {% if product.available and product.variants.size > 1 %}
+            <div class="product--options">
+                {% if product.options[0] == 'Size' %}
+                    {% assign used = '' %}
+                    <div class="product--option1">
+                        {% for variant in product.variants %}
+                            {% unless used contains variant.option1 or variant.available == false %}
+                                <label class="product--option1-label">
+                                    <input
+                                        class="product--option1-input"
+                                        id="size"
+                                        type="radio"
+                                        name="size"
+                                        value="{{ variant.option1 }}"
+                                        data-product-id="{{ product.id }}"
+                                        data-variants="{{ product.variants | json | escape }}"
+                                        data-option2="{{ product.options[1] }}"
+                                    >
+                                    <span>
+                                        {{ variant.option1 }}
+                                    </span>
+                                </label>
+                                {% capture used %}{{ used }} {{ variant.option1 }}{% endcapture %}
+                            {% endunless %}
+                        {% endfor %}
+                    </div>
+                {% elsif product.options[0] == 'Color' %}
+                    {% assign used = '' %}
+                    <div class="product--option1">
+                        {% for variant in product.variants %}
+                            {% unless used contains variant.option1 or variant.available == false %}
+                                <label class="product--option1-label">
+                                    <input
+                                        class="product--option1-input"
+                                        id="color"
+                                        type="radio"
+                                        name="color"
+                                        value="{{ variant.option1 }}"
+                                        data-product-id="{{ product.id }}"
+                                        data-variants="{{ product.variants | json | escape }}"
+                                        data-option2="{{ product.options[1] }}"
+                                    >
+                                    <span style="background-color:{{ variant.option1 }};"></span>
+                                </label>
+                                {% capture used %}{{ used }} {{ variant.option1 }}{% endcapture %}
+                            {% endunless %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if product.options[1] %}
+                    <div class="product--option2-{{ product.id }} product--option2"></div>
+                {% endif %}
+            </div>
         {% endif %}
         {%- comment -%} Buttons {%- endcomment -%}
         <div class="product--buttons">

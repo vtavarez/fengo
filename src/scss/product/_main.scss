@@ -15,8 +15,7 @@
         display: block;
       }
 
-      .product--options-sizes,
-      .product--options-colors {
+      .product--options {
         display: block;
       }
     }
@@ -133,8 +132,7 @@
     color: $featured-collection--color-secondary;
   }
 
-  &--options-colors,
-  &--options-sizes {
+  &--options {
     position: absolute;
     z-index: 1;
     bottom: 5.8rem;
@@ -146,9 +144,11 @@
       display: none;
       bottom: 8.25rem;
     }
+  }
 
-    &-color,
-    &-size {
+  &--option1,
+  &--option2 {
+    &-label {
       position: relative;
       cursor: pointer;
 
@@ -178,15 +178,12 @@
         text-align: center;
         pointer-events: none;
       }
-
     }
   }
 
-  &--options-sizes {
-    bottom: 8.6rem;
-
-    @include media-breakpoint-up(lg){
-      bottom: 11.25rem;
+  &--option2 {
+    &-label {
+      margin-right: .625rem;
     }
   }
 

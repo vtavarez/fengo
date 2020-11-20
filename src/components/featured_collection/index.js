@@ -1,18 +1,21 @@
 import MiniCart from '../mini_cart';
 class FeaturedCollection {
     constructor() {
+        this.successBar = document.querySelector('.notification-bar-success');
+        this.warningBar = document.querySelector('.notification-bar-warning');
         this.tabs = document.querySelector('.featured-collection--tabs');
         this.collections = document.querySelector('.featured-collection--collections');
         this.tab = this.tabs.children;
         this.collection = this.collections.children;
         this.state = {
+            chunk: 2,
             activeCollection: 0,
-            activeProductPrice: null,
-            activeProductVariants: null,
-            activeProductColors: null,
-            activeProductId: null,
-            selectedVariantSize: null,
-            selectedVariantColor: null,
+            productPrice: null,
+            productVariants: null,
+            productOption2: null,
+            productId: null,
+            selectedOption1: null,
+            selectedOption2: null,
             selectedVariant: null
         };
         this.tabs.addEventListener('click', this.selectedCollection.bind(this));
@@ -22,11 +25,11 @@ class FeaturedCollection {
             if(e.target.classList[0] === 'featured-collection--collections-collection-lazyload-button'){
                 this.lazyLoad(e);
             }
-            if(e.target.className === 'product--options-sizes-size-input'){
-                this.selectedProductSize(e);
+            if(e.target.className === 'product--option1-input'){
+                this.selectedOption1(e);
             }
-            if(e.target.className === 'product--options-colors-color-input'){
-                this.selectedProductColor(e);
+            if(e.target.className === 'product--option2-input'){
+                this.selectedOption2(e);
             }
         });
     }
@@ -52,102 +55,163 @@ class FeaturedCollection {
         }
     }
 
-    selectedProductSize(e){
-        this.state.activeProductId = e.target.dataset.id;
-        this.state.activeProductVariants = JSON.parse(e.target.dataset.variants);
-        this.state.selectedVariantSize = e.target.value;
-        const availableColors = this
-        .state
-        .activeProductVariants
-        .reduce((acc,variant) => {
-            if(variant.available && variant.option1 === this.state.selectedVariantSize){
-                acc.push(variant.option2);
-            }
-            return acc;
-        },[]);
-
+    updateProductDetails(){
         if(!this
             .state
-            .activeProductColors || this
+            .productPrice || this
             .state
-            .activeProductColors
-            .className !== `product--options-colors-${this.state.activeProductId}`
+            .productPrice
+            .className !== `product--details-price-${this.state.productId}`
         ){
-            this.state.activeProductColors = this
+            this.state.productPrice = this
             .collection[this.state.activeCollection]
-            .querySelector(`.product--options-colors-${this.state.activeProductId}`);
+            .querySelector(`.product--details-price-${this.state.productId}`);
         }
-
-        const fragment = new DocumentFragment();
-
-        availableColors.forEach(color => {
-            const label = document.createElement('label');
-            label.className = 'product--options-colors-color';
-            label.innerHTML = `
-                <input class="product--options-colors-color-input" id="color" type="radio" name="color" value="${color}">
-                <span style="background-color:${color};"></span>
+        if(this
+            .state
+            .selectedVariant
+            .compare_at_price > 0
+        ){
+            this
+            .state
+            .productPrice
+            .innerHTML = `
+                <span class="product--details-price-compare">
+                ${MiniCart.formatCurrency(this.state.selectedVariant.compare_at_price)}
+                </span>
+                ${MiniCart.formatCurrency(this.state.selectedVariant.price)}
             `;
-            fragment.appendChild(label);
-        });
-
-        this.state.activeProductColors.replaceChildren(fragment);
+            return;
+        }
+        this
+        .state
+        .productPrice
+        .textContent = MiniCart.formatCurrency(this.state.selectedVariant.price);
     }
 
-    selectedProductColor(e){
-        this.state.selectedVariantColor = e.target.value;
+    selectedOption1(e){
+        this.state.productId = e.target.dataset.productId;
+        this.state.productVariants = JSON.parse(e.target.dataset.variants);
+        this.state.selectedOption1 = e.target.value;
+        this.state.productOption2 = Boolean(e.target.dataset.option2);
+        const optionType = e.target.dataset.option2;
+
+        if(this.state.productOption2){
+            const availableOption2 = this
+            .state
+            .productVariants
+            .reduce((acc,variant) => {
+                if(variant.available && variant.option1 === this.state.selectedOption1){
+                    acc.push(variant.option2);
+                }
+                return acc;
+            },[]);
+
+            if(!this
+                .state
+                .productOption2 || this
+                .state
+                .productOption2
+                .className !== `product--option2-${this.state.productId}`
+            ){
+                this.state.productOption2 = this
+                .collection[this.state.activeCollection]
+                .querySelector(`.product--option2-${this.state.productId}`);
+            }
+
+            const fragment = document.createDocumentFragment();
+
+            availableOption2
+            .forEach(option2 => {
+                const label = document.createElement('label');
+                label.className = 'product--option2-label';
+                if(optionType === 'Color'){
+                    label.innerHTML = `
+                        <input
+                            class="product--option2-input"
+                            id="color"
+                            type="radio"
+                            name="color"
+                            value="${option2}"
+                        >
+                        <span style="background-color:${option2};"></span>
+                    `;
+                }
+                if(optionType === 'Size'){
+                    label.innerHTML = `
+                        <input
+                            class="product--option2-input"
+                            id="size"
+                            type="radio"
+                            name="size"
+                            value="${option2}"
+                        >
+                        <span>
+                            ${option2}
+                        </span>
+                    `;
+                }
+                fragment.appendChild(label);
+            });
+
+            this.state.productOption2.replaceChildren(fragment);
+            return;
+        }
+
         this.state.selectedVariant = this
         .state
-        .activeProductVariants
+        .productVariants
+        .find(variant => variant.available && variant.option1 === this.state.selectedOption1);
+
+        this.updateProductDetails();
+    }
+
+    selectedOption2(e){
+        this.state.selectedOption2 = e.target.value;
+        this.state.selectedVariant = this
+        .state
+        .productVariants
         .find(variant => {
-            if(variant.option1 === this.state.selectedVariantSize){
-                if(variant.option2 === this.state.selectedVariantColor){
+            if(variant.option1 === this.state.selectedOption1){
+                if(variant.option2 === this.state.selectedOption2){
                     return variant;
                 }
             }
         });
 
-        if(!this
-            .state
-            .activeProductPrice || this
-            .state
-            .activeProductPrice
-            .className !== `product--details-price-${this.state.activeProductId}`
-        ){
-            this.state.activeProductPrice = this
-            .collection[this.state.activeCollection]
-            .querySelector(`.product--details-price-${this.state.activeProductId}`)
-        }
-
-        if(this.state.selectedVariant.compare_at_price > 0){
-            this.state.activeProductPrice.innerHTML = `
-                <span class="product--details-price-compare">
-                    ${MiniCart.formatCurrency(this.state.selectedVariant.compare_at_price)}
-                </span>
-                ${MiniCart.formatCurrency(this.state.selectedVariant.price)}
-            `;
-        } else {
-            this.state.activeProductPrice.textContent = MiniCart.formatCurrency(this.state.selectedVariant.price);
-        }
+        this.updateProductDetails();
     }
 
     addProductToCart(e){
         e.preventDefault();
-        // const product = e.target.dataset.product;
+        if (!this.state.selectedOption1) {
+            this.warningBar.textContent = 'Please select a color.';
+            this.warningBar.classList.toggle('notification-bar-active');
+            setTimeout(() => {
+                this.warningBar.classList.toggle('notification-bar-active');
+            }, 1000);
+        } else if (!this.state.selectedOption2) {
+            alert('Please slelect a size');
+        }
         // MiniCart.addProduct(JSON.parse(product), 1);
     }
 
     lazyLoad(e){
-        const page = 2;
-        const totalPages = e.target.dataset.totalPages;
+        const totalChunks = parseInt(e.target.dataset.totalChunks);
         const url = e.target.dataset.url.split('page=')[0];
         const button = e.target;
         const loader = e.target.nextElementSibling;
         const collection = this.collection[this.state.activeCollection].firstElementChild;
 
-        button.classList.toggle('featured-collection--collections-collection-lazyload-active');
-        loader.classList.toggle('featured-collection--collections-collection-lazyload-active');
+        button
+        .classList
+        .remove('featured-collection--collections-collection-lazyload-active');
 
-        fetch(`${url}page=${page}`, {
+        loader
+        .classList
+        .add('featured-collection--collections-collection-lazyload-active');
+
+        fetch(`${url}page=${this.state.chunk}`, {
             method: 'GET',
             headers: {'Content-Type': 'text/html'}
         })
@@ -163,10 +227,15 @@ class FeaturedCollection {
 
             collection.appendChild(fragment);
 
-            page < totalPages ? page++ : button.setAttribute('disabled','disabled');
+            this.state.chunk < totalChunks ? this.state.chunk : button.setAttribute('disabled','disabled');
 
-            loader.classList.toggle('featured-collection--collections-collection-lazyload-active');
-            button.classList.toggle('featured-collection--collections-collection-lazyload-active');
+            loader
+            .classList
+            .remove('featured-collection--collections-collection-lazyload-active');
+
+            button
+            .classList
+            .add('featured-collection--collections-collection-lazyload-active');
         });
     }
 }

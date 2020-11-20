@@ -8,8 +8,8 @@
                         {% assign collection_title = collections[block.settings.collection].title %}
                         <li class="featured-collection--tabs-tab {% if forloop.first %} featured-collection--tabs-tab-active {% endif %}"
                             data-collection="{{ forloop.index0 }}"
-                            role="tab"
                             tabindex="0"
+                            aria-label="{{ collection_title }}"
                             {{ block.shopify_attributes }}
                         >
                             {{ collection_title }}
@@ -36,7 +36,7 @@
                                         <button
                                             class="featured-collection--collections-collection-lazyload-button featured-collection--collections-collection-lazyload-active"
                                             data-collection="{{ collection_title | downcase }}"
-                                            data-total-pages="{{ paginate.pages }}"
+                                            data-total-chunks="{{ paginate.pages }}"
                                             data-url="{{ paginate.next.url }}"
                                         >
                                             show more

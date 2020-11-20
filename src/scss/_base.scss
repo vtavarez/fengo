@@ -23,3 +23,22 @@ input[type=text] {
     -moz-appearance: none;
     appearance: none;
 }
+
+.notification-bar-success,
+.notification-bar-warning {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    border-radius: 0;
+    text-align: center;
+    text-transform: capitalize;
+    font-family: $cousine-bold, sans-serif;
+    font-size: 1rem;
+    transition: transform .3s ease-in-out;
+    z-index: 9999;
+    transform: translateY(-4rem);
+}
+
+.notification-bar-active {
+    transform: translateY(0rem);
+}
