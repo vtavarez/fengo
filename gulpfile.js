@@ -22,7 +22,11 @@ exports.build = async function () {
                 ]
             }),
             babel({
-                babelHelpers: 'bundled'
+                babelHelpers: 'bundled',
+                plugins: [
+                    "@babel/plugin-proposal-class-properties",
+                    "@babel/plugin-proposal-private-methods"
+                ]
             }),
             terser()
         ],

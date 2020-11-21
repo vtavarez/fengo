@@ -1,30 +1,31 @@
+import { toggleWarning, toggleSuccess } from '../../utils';
 class MiniCart {
-    constructor(){
-        this.cart = document.querySelectorAll('.minicart--products');
-        this.shipping = document.querySelectorAll('.minicart--totals-shipping');
-        this.total = document.querySelectorAll('.minicart--totals-cart');
-        this.state = JSON.parse(localStorage.getItem('minicart')) ?? {
-            open: false,
-            cart: {},
-            total: 0
-        };
-        this.cart.forEach(cart => {
+    static #cart = document.querySelectorAll('.minicart--products');
+    static #shipping = document.querySelectorAll('.minicart--totals-shipping');
+    static #total = document.querySelectorAll('.minicart--totals-cart');
+    static state = JSON.parse(localStorage.getItem('minicart')) ?? {
+        cart: {},
+        total: 0
+    };
+
+    static init(){
+        this.#cart.forEach(cart => {
             cart.addEventListener('click', e => {
                 e.stopPropagation();
                 switch (e.target.className) {
                     case 'minicart--remove-icon':
                         return this.removeProduct(e.target.dataset.productId);
                     case 'minicart--increase-quantity-btn':
-                        return this.increaseQuantity(e.target.parentElement.dataset.productId);
+                        return this.#increaseQuantity(e.target.parentElement.dataset.productId);
                     case 'minicart--decrease-quantity-btn':
-                        return this.decreaseQuantity(e.target.parentElement.dataset.productId);
+                        return this.#decreaseQuantity(e.target.parentElement.dataset.productId);
                     default:
                         break;
                 }
             });
         });
 
-        this.render();
+        this.#render();
     }
 
     static formatCurrency($){
@@ -46,33 +47,34 @@ class MiniCart {
             fetch('/cart/add.js', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json '},
-                body: JSON.stringify({ items: [{ ...product }] })
+                body: JSON.stringify({ items: [{ id: product.id, quantity: qty }] })
             })
-            .then(res => res.json())
+            .then(response => response.json())
             .then(data => {
                 console.log(data);
-            });
-
-            this.render();
+                this.#render();
+                toggleSuccess(`${product.title} was successfully added to cart!`);
+            })
+            .catch(error => console.log(error));
+        } else {
+            toggleWarning('Item already in cart!');
         }
     }
 
     static removeProduct(productId){
         if(this.state.cart[productId]){
-            this.state.total -= (this.state.cart[productId].price * this.state.cart[productId].quantity);
-            delete this.state.cart[productId];
-
             fetch('/cart/update.js', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ updates: { productId: 0 }})
+                body: JSON.stringify({ updates: { [productId]: 0 }})
             })
-            .then(res => res.json())
-            .then((data) => {
-                console.log(data);
+            .then(response => response.json())
+            .then(data => {
+                this.state.total -= (this.state.cart[productId].price * this.state.cart[productId].quantity);
+                delete this.state.cart[productId];
+                this.#render();
             })
-
-            this.render();
+            .catch(error => console.error(error));
         }
     }
 
@@ -87,34 +89,33 @@ class MiniCart {
                 this.state.cart[productId].quantity = quantity;
             }
 
-
             fetch('/cart/update.js', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ updates: { productId: this.state.cart[productId].quantity }})
+                body: JSON.stringify({ updates: { [productId]: this.state.cart[productId].quantity }})
             })
-            .then(res => res.json())
+            .then(response => response.json())
             .then(data => {
                 console.log(data);
-            });
-
-            this.render();
+                this.#render();
+            })
+            .catch(error => console.error(error));
         }
     }
 
-    _increaseQuantity(productId){
+    static #increaseQuantity(productId){
         const quantity = this.state.cart[productId].quantity + 1;
         this.updateProduct(productId, quantity);
     }
 
-    _decreaseQuantity(productId){
+    static #decreaseQuantity(productId){
         if(this.state.cart[productId].quantity > 1){
             const quantity = this.state.cart[productId].quantity - 1;
             this.updateProduct(productId, quantity);
         }
     }
 
-    _render(){
+    static #render(){
         const cart = Object.values(this.state.cart);
         let products = '';
 
@@ -185,9 +186,9 @@ class MiniCart {
                                 </button>
                             </div>
                             <p class="minicart--product-price">
-                                ${product.price < product.compare_at_price_max ? (
+                                ${product.price < product.compare_at_price ? (
                                     `<span aria-label="product price" class="strikeout-price">
-                                        ${this.formatCurrency(product.compare_at_price_max)}
+                                        ${this.formatCurrency(product.compare_at_price)}
                                     </span>
                                     <span aria-label="product sale price" class="price">
                                         ${this.formatCurrency(product.price)}
@@ -234,10 +235,12 @@ class MiniCart {
             `;
         }
 
-        this.cart.forEach(cart => { cart.innerHTML = products; });
-        this.total.forEach(total => { total.textContent = this.formatCurrency(this.state.total)});
+        this.#cart.forEach(cart => { cart.innerHTML = products; });
+        this.#total.forEach(total => { total.textContent = this.formatCurrency(this.state.total)});
         localStorage.setItem('minicart', JSON.stringify(this.state));
     }
 }
+
+MiniCart.init();
 
 export default MiniCart;

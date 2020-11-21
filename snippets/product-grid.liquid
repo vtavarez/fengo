@@ -1,5 +1,17 @@
 <div class="product">
-    <form id="{{ product.id }}" data-product="{{ product | json | escape }}">
+    <form
+        id="{{ product.id }}"
+        {% if product.has_only_default_variant %}
+        data-product-id="{{ product.variants[0].id }}"
+        {% else %}
+        data-product-id="{{ product.id }}"
+        {% endif %}
+        data-product-title="{{ product.title }}"
+        data-product-image="{{ product.featured_image | img_url }}"
+        data-product-handle="{{ product.handle }}"
+        data-product-price="{{ product.price }}"
+        data-product-compare-price="{{ product.compare_at_price }}"
+    >
         <a class="product--url" href="{{ product.url }}">
             {%- comment -%} Image {%- endcomment -%}
             <picture>
@@ -72,17 +84,17 @@
             {% endif %}
         </a>
         {%- comment -%} Options {%- endcomment -%}
-        {% if product.available and product.variants.size > 1 %}
+        {% if product.available and product.has_only_default_variant == false %}
             <div class="product--options">
                 {% if product.options[0] == 'Size' %}
                     {% assign used = '' %}
                     <div class="product--option1">
                         {% for variant in product.variants %}
                             {% unless used contains variant.option1 or variant.available == false %}
-                                <label class="product--option1-label">
+                                <label for="size-{{ variant.id }}" class="product--option1-label">
                                     <input
                                         class="product--option1-input"
-                                        id="size"
+                                        id="size-{{ variant.id }}"
                                         type="radio"
                                         name="size"
                                         value="{{ variant.option1 }}"
@@ -103,10 +115,10 @@
                     <div class="product--option1">
                         {% for variant in product.variants %}
                             {% unless used contains variant.option1 or variant.available == false %}
-                                <label class="product--option1-label">
+                                <label for="color-{{ variant.id }}" class="product--option1-label">
                                     <input
                                         class="product--option1-input"
-                                        id="color"
+                                        id="color-{{ variant.id }}"
                                         type="radio"
                                         name="color"
                                         value="{{ variant.option1 }}"
@@ -137,10 +149,13 @@
                             disabled="disabled"
                             {% endif %}
                             aria-label="add to cart"
-                            class="product--buttons-button"
+                            class="product--button-{{ product.id }} product--buttons-button"
                         >
                             add to bag
                         </button>
+                        <div class="product--buttons-loader-{{ product.id }} product--buttons-loader">
+                            {% include 'icon-loader.svg' %}
+                        </div>
                     </div>
                     <div class="col-6">
                         <a  role="navigation"

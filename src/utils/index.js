@@ -24,3 +24,27 @@ export const trapFocus = function (e) {
         }
     }
 }
+
+export const toggleWarning = function (message) {
+    let warningBar = null;
+
+    if(!warningBar) {
+        warningBar = document.querySelector('.notification-bar-warning');
+    }
+
+    warningBar.textContent = message;
+    warningBar.classList.toggle('notification-bar-active');
+    setTimeout(() => warningBar.classList.toggle('notification-bar-active'), 1500);
+}
+
+export const toggleSuccess = function (message) {
+    let successBar = null;
+
+    if(!successBar) {
+        successBar = document.querySelector('.notification-bar-success');
+    }
+
+    successBar.textContent = message;
+    successBar.classList.toggle('notification-bar-active');
+    setTimeout(() => successBar.classList.toggle('notification-bar-active'), 1500);
+}

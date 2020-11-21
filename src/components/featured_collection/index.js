@@ -1,8 +1,7 @@
 import MiniCart from '../mini_cart';
+import { toggleWarning } from '../../utils';
 class FeaturedCollection {
     constructor() {
-        this.successBar = document.querySelector('.notification-bar-success');
-        this.warningBar = document.querySelector('.notification-bar-warning');
         this.tabs = document.querySelector('.featured-collection--tabs');
         this.collections = document.querySelector('.featured-collection--collections');
         this.tab = this.tabs.children;
@@ -89,6 +88,68 @@ class FeaturedCollection {
         .textContent = MiniCart.formatCurrency(this.state.selectedVariant.price);
     }
 
+    enableOption2(optionType){
+        const availableOption2 = this
+        .state
+        .productVariants
+        .filter(variant => {
+            if(variant.available && variant.option1 === this.state.selectedOption1){
+                return variant;
+            }
+        });
+
+        if(!this
+            .state
+            .productOption2 || this
+            .state
+            .productOption2
+            .className !== `product--option2-${this.state.productId}`
+        ){
+            this.state.productOption2 = this
+            .collection[this.state.activeCollection]
+            .querySelector(`.product--option2-${this.state.productId}`);
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        availableOption2
+        .forEach(({ id, option2 }) => {
+            const label = document.createElement('label');
+            label.className = 'product--option2-label';
+            if(optionType === 'Color'){
+                label.setAttribute('for', `color-${id}`)
+                label.innerHTML = `
+                    <input
+                        class="product--option2-input"
+                        id="color-${id}"
+                        type="radio"
+                        name="color"
+                        value="${option2}"
+                    >
+                    <span style="background-color:${option2};"></span>
+                `;
+            }
+            if(optionType === 'Size'){
+                label.setAttribute('for', `size-${id}`)
+                label.innerHTML = `
+                    <input
+                        class="product--option2-input"
+                        id="size-${id}"
+                        type="radio"
+                        name="size"
+                        value="${option2}"
+                    >
+                    <span>
+                        ${option2}
+                    </span>
+                `;
+            }
+            fragment.appendChild(label);
+        });
+
+        this.state.productOption2.replaceChildren(fragment);
+    }
+
     selectedOption1(e){
         this.state.productId = e.target.dataset.productId;
         this.state.productVariants = JSON.parse(e.target.dataset.variants);
@@ -97,65 +158,8 @@ class FeaturedCollection {
         const optionType = e.target.dataset.option2;
 
         if(this.state.productOption2){
-            const availableOption2 = this
-            .state
-            .productVariants
-            .reduce((acc,variant) => {
-                if(variant.available && variant.option1 === this.state.selectedOption1){
-                    acc.push(variant.option2);
-                }
-                return acc;
-            },[]);
-
-            if(!this
-                .state
-                .productOption2 || this
-                .state
-                .productOption2
-                .className !== `product--option2-${this.state.productId}`
-            ){
-                this.state.productOption2 = this
-                .collection[this.state.activeCollection]
-                .querySelector(`.product--option2-${this.state.productId}`);
-            }
-
-            const fragment = document.createDocumentFragment();
-
-            availableOption2
-            .forEach(option2 => {
-                const label = document.createElement('label');
-                label.className = 'product--option2-label';
-                if(optionType === 'Color'){
-                    label.innerHTML = `
-                        <input
-                            class="product--option2-input"
-                            id="color"
-                            type="radio"
-                            name="color"
-                            value="${option2}"
-                        >
-                        <span style="background-color:${option2};"></span>
-                    `;
-                }
-                if(optionType === 'Size'){
-                    label.innerHTML = `
-                        <input
-                            class="product--option2-input"
-                            id="size"
-                            type="radio"
-                            name="size"
-                            value="${option2}"
-                        >
-                        <span>
-                            ${option2}
-                        </span>
-                    `;
-                }
-                fragment.appendChild(label);
-            });
-
-            this.state.productOption2.replaceChildren(fragment);
-            return;
+           this.enableOption2(optionType);
+           return;
         }
 
         this.state.selectedVariant = this
@@ -184,16 +188,54 @@ class FeaturedCollection {
 
     addProductToCart(e){
         e.preventDefault();
-        if (!this.state.selectedOption1) {
-            this.warningBar.textContent = 'Please select a color.';
-            this.warningBar.classList.toggle('notification-bar-active');
-            setTimeout(() => {
-                this.warningBar.classList.toggle('notification-bar-active');
-            }, 1000);
-        } else if (!this.state.selectedOption2) {
-            alert('Please slelect a size');
+
+        if (this.state.productId) {
+            if (!this.state.selectedVariant && !this.state.selectedOption1) {
+               return toggleWarning('Please select a color.');
+            } else if (!this.state.selectedVariant && !this.state.selectedOption2) {
+                return toggleWarning('Please select a size.');
+            }
         }
-        // MiniCart.addProduct(JSON.parse(product), 1);
+
+        if (this.state.productId) {
+            if (this.state.productId !== e.target.dataset.productId) {
+                return toggleWarning('Please select a color.');
+            }
+        }
+
+        const product = {
+            id: e.target.dataset.productId,
+            title: e.target.dataset.productTitle,
+            featured_image: e.target.dataset.productImage,
+            handle: e.target.dataset.productHandle,
+            price: e.target.dataset.productPrice,
+            compare_at_price: e.target.dataset.productComparePrice
+        }
+
+        if(this.state.selectedVariant){
+            const {
+                id,
+                price,
+                compare_at_price,
+                option1,
+                option2,
+                sku
+            } =  this.state.selectedVariant;
+
+            MiniCart.addProduct({
+                ...product,
+                id,
+                price,
+                compare_at_price,
+                option1,
+                option2,
+                sku
+            }, 1);
+
+            return;
+        }
+
+        MiniCart.addProduct(product, 1);
     }
 
     lazyLoad(e){
