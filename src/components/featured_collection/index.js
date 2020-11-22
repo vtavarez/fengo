@@ -4,8 +4,8 @@ class FeaturedCollection {
     constructor() {
         this.tabs = document.querySelector('.featured-collection--tabs');
         this.collections = document.querySelector('.featured-collection--collections');
-        this.tab = this.tabs.children;
-        this.collection = this.collections.children;
+        this.tab = this.tabs?.children;
+        this.collection = this.collections?.children;
         this.state = {
             chunk: 2,
             activeCollection: 0,
@@ -15,25 +15,47 @@ class FeaturedCollection {
             productId: null,
             selectedOption1: null,
             selectedOption2: null,
-            selectedVariant: null
+            selectedVariant: null,
+            option2Type: null
         };
-        this.tabs.addEventListener('click', this.selectedCollection.bind(this));
-        this.collections.addEventListener('submit', this.addProductToCart.bind(this));
-        this.collections.addEventListener('click', e => {
-            e.stopPropagation();
-            if(e.target.classList[0] === 'featured-collection--collections-collection-lazyload-button'){
-                this.lazyLoad(e);
-            }
-            if(e.target.className === 'product--option1-input'){
-                this.selectedOption1(e);
-            }
-            if(e.target.className === 'product--option2-input'){
-                this.selectedOption2(e);
-            }
-        });
+
+        this.tabs?.addEventListener('click', this.selectedCollection.bind(this));
+        this.collections?.addEventListener('submit', this.addProductToCart.bind(this));
+        this.collections?.addEventListener('click', this.dispatchAction.bind(this));
+        this.collections?.addEventListener('keyup', this.dispatchAction.bind(this));
     }
 
-    toggleCollection(){
+    dispatchAction(event) {
+        event.stopPropagation();
+        if (event.type === 'click' || event.key === ' ') {
+            if(event.target.classList[0] === 'featured-collection--collections-collection-lazyload-button'){
+                this.lazyLoad(event);
+            }
+            if(event.target.className === 'product--option1-input'){
+                this.selectedOption1(event);
+            }
+            if(event.target.className === 'product--option2-input'){
+                this.selectedOption2(event);
+            }
+        }
+    }
+
+    resetState() {
+        this.state.productOption2?.replaceChildren();
+        this.state = {
+            ...this.state,
+            productPrice: null,
+            productVariants: null,
+            productOption2: null,
+            productId: null,
+            selectedOption1: null,
+            selectedOption2: null,
+            selectedVariant: null,
+            option2Type: null
+        }
+    }
+
+    toggleCollection() {
         this
         .tab[this.state.activeCollection]
         .classList
@@ -44,9 +66,9 @@ class FeaturedCollection {
         .toggle('featured-collection--collections-collection-active');
     }
 
-    selectedCollection(e) {
-        e.stopPropagation();
-        const selectedCollection = e.target.dataset.collection;
+    selectedCollection(event) {
+        event.stopPropagation();
+        const selectedCollection = event.target.dataset.collection;
         if(selectedCollection !== this.state.activeCollection){
             this.toggleCollection();
             this.state.activeCollection = selectedCollection;
@@ -54,7 +76,7 @@ class FeaturedCollection {
         }
     }
 
-    updateProductDetails(){
+    updateProductDetails() {
         if(!this
             .state
             .productPrice || this
@@ -88,7 +110,8 @@ class FeaturedCollection {
         .textContent = MiniCart.formatCurrency(this.state.selectedVariant.price);
     }
 
-    enableOption2(optionType){
+    enableOption2() {
+        const fragment = document.createDocumentFragment();
         const availableOption2 = this
         .state
         .productVariants
@@ -110,13 +133,12 @@ class FeaturedCollection {
             .querySelector(`.product--option2-${this.state.productId}`);
         }
 
-        const fragment = document.createDocumentFragment();
-
         availableOption2
         .forEach(({ id, option2 }) => {
             const label = document.createElement('label');
+            label.setAttribute('tabindex', '0');
             label.className = 'product--option2-label';
-            if(optionType === 'Color'){
+            if(this.state.option2Type === 'Color'){
                 label.setAttribute('for', `color-${id}`)
                 label.innerHTML = `
                     <input
@@ -129,7 +151,7 @@ class FeaturedCollection {
                     <span style="background-color:${option2};"></span>
                 `;
             }
-            if(optionType === 'Size'){
+            if(this.state.option2Type === 'Size'){
                 label.setAttribute('for', `size-${id}`)
                 label.innerHTML = `
                     <input
@@ -150,15 +172,15 @@ class FeaturedCollection {
         this.state.productOption2.replaceChildren(fragment);
     }
 
-    selectedOption1(e){
-        this.state.productId = e.target.dataset.productId;
-        this.state.productVariants = JSON.parse(e.target.dataset.variants);
-        this.state.selectedOption1 = e.target.value;
-        this.state.productOption2 = Boolean(e.target.dataset.option2);
-        const optionType = e.target.dataset.option2;
+    selectedOption1(event) {
+        this.state.productId = event.target.dataset.productId;
+        this.state.productVariants = JSON.parse(event.target.dataset.variants);
+        this.state.selectedOption1 = event.target.value;
+        this.state.productOption2 = Boolean(event.target.dataset.option2);
+        this.state.option2Type = event.target.dataset.option2;
 
-        if(this.state.productOption2){
-           this.enableOption2(optionType);
+        if (this.state.productOption2) {
+           this.enableOption2();
            return;
         }
 
@@ -170,8 +192,8 @@ class FeaturedCollection {
         this.updateProductDetails();
     }
 
-    selectedOption2(e){
-        this.state.selectedOption2 = e.target.value;
+    selectedOption2(event) {
+        this.state.selectedOption2 = event.target.value;
         this.state.selectedVariant = this
         .state
         .productVariants
@@ -186,72 +208,74 @@ class FeaturedCollection {
         this.updateProductDetails();
     }
 
-    addProductToCart(e){
-        e.preventDefault();
-
-        if (this.state.productId) {
-            if (!this.state.selectedVariant && !this.state.selectedOption1) {
-               return toggleWarning('Please select a color.');
-            } else if (!this.state.selectedVariant && !this.state.selectedOption2) {
-                return toggleWarning('Please select a size.');
-            }
-        }
-
-        if (this.state.productId) {
-            if (this.state.productId !== e.target.dataset.productId) {
-                return toggleWarning('Please select a color.');
-            }
-        }
-
+    addProductToCart(event) {
+        event.preventDefault();
+        const submitButton = event.submitter;
+        const loader = submitButton.nextElementSibling;
+        const hasOptions = JSON.parse(event.target.dataset.hasOptions);
         const product = {
-            id: e.target.dataset.productId,
-            title: e.target.dataset.productTitle,
-            featured_image: e.target.dataset.productImage,
-            handle: e.target.dataset.productHandle,
-            price: e.target.dataset.productPrice,
-            compare_at_price: e.target.dataset.productComparePrice
+            id: event.target.dataset.productId,
+            title: event.target.dataset.productTitle,
+            featured_image: event.target.dataset.productImage,
+            handle: event.target.dataset.productHandle,
+            price: event.target.dataset.productPrice,
+            compare_at_price: event.target.dataset.productComparePrice
         }
 
-        if(this.state.selectedVariant){
-            const {
-                id,
-                price,
-                compare_at_price,
-                option1,
-                option2,
-                sku
-            } =  this.state.selectedVariant;
+        if (hasOptions) {
+            if (!this.state.selectedVariant) {
+                if (product.id !== this.state.productId) {
+                    return toggleWarning('Please select options for the chosen product.');
+                }
+                if (!this.state.selectedOption2) {
+                    if (this.state.option2Type == 'Size') {
+                        return toggleWarning('Please select a Size option.');
+                    }
+                    if (this.state.option2Type == 'Color') {
+                        return toggleWarning('Plase select a Color option.');
+                    }
+                }
+            }
+        }
 
+        submitButton.classList.toggle('active');
+        loader.classList.toggle('active');
+
+        if (this.state.selectedVariant) {
             MiniCart.addProduct({
                 ...product,
-                id,
-                price,
-                compare_at_price,
-                option1,
-                option2,
-                sku
+                ...this.state.selectedVariant,
+                title: product.title,
+                featured_image: product.featured_image
             }, 1);
-
+            event.target.reset();
+            this.resetState();
+            submitButton.classList.toggle('active');
+            loader.classList.toggle('active');
             return;
         }
 
         MiniCart.addProduct(product, 1);
+        event.target.reset();
+        this.resetState();
+        submitButton.classList.toggle('active');
+        loader.classList.toggle('active');
     }
 
-    lazyLoad(e){
-        const totalChunks = parseInt(e.target.dataset.totalChunks);
-        const url = e.target.dataset.url.split('page=')[0];
-        const button = e.target;
-        const loader = e.target.nextElementSibling;
+    lazyLoad(event) {
+        const totalChunks = parseInt(event.target.dataset.totalChunks);
+        const url = event.target.dataset.url;
+        const button = event.target;
+        const loader = event.target.nextElementSibling;
         const collection = this.collection[this.state.activeCollection].firstElementChild;
 
         button
         .classList
-        .remove('featured-collection--collections-collection-lazyload-active');
+        .remove('active');
 
         loader
         .classList
-        .add('featured-collection--collections-collection-lazyload-active');
+        .add('active');
 
         fetch(`${url}page=${this.state.chunk}`, {
             method: 'GET',
@@ -273,11 +297,11 @@ class FeaturedCollection {
 
             loader
             .classList
-            .remove('featured-collection--collections-collection-lazyload-active');
+            .remove('active');
 
             button
             .classList
-            .add('featured-collection--collections-collection-lazyload-active');
+            .add('active');
         });
     }
 }

@@ -2,24 +2,28 @@ body {
     -webkit-font-smoothing: subpixel-antialiased;
 }
 
+.active {
+    display: block !important;
+}
+
 .no-margin {
-    margin: 0;
+    margin: 0 !important;
 }
 
 .no-padding {
-    padding: 0;
+    padding: 0 !important;
 }
 
 .no-position {
-    position: unset;
+    position: unset !important;
 }
 
 .relative-position {
-    position: relative;
+    position: relative !important;
 }
 
 input[type=text] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
 }

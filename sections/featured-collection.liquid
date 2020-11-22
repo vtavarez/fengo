@@ -6,7 +6,7 @@
                 <ul class="featured-collection--tabs">
                     {% for block in section.blocks %}
                         {% assign collection_title = collections[block.settings.collection].title %}
-                        <li class="featured-collection--tabs-tab {% if forloop.first %} featured-collection--tabs-tab-active {% endif %}"
+                        <li class="featured-collection--tabs-tab {% if forloop.first %}featured-collection--tabs-tab-active{% endif %}"
                             data-collection="{{ forloop.index0 }}"
                             tabindex="0"
                             aria-label="{{ collection_title }}"
@@ -22,7 +22,7 @@
                 <div class="featured-collection--collections">
                     {% for block in section.blocks %}
                         {% assign collection_title = collections[block.settings.collection].title %}
-                        <div class="featured-collection--collections-collection {% if forloop.first %} featured-collection--collections-collection-active {% endif %}" {{ block.shopify_attributes }}>
+                        <div class="featured-collection--collections-collection {% if forloop.first %}featured-collection--collections-collection-active{% endif %}" {{ block.shopify_attributes }}>
                             {% paginate collections[block.settings.collection].products by section.settings.products_per_page %}
                                 <div class="row no-margin">
                                     {% for product in collections[block.settings.collection].products %}
@@ -32,12 +32,14 @@
                                     {% endfor %}
                                 </div>
                                 {% unless paginate.parts.size < 1 %}
+                                    {% assign url_array = paginate.next.url | split: 'page=' %}
+                                    {% assign url = url_array[0] %}
                                     <div class="featured-collection--collections-collection-lazyload">
                                         <button
-                                            class="featured-collection--collections-collection-lazyload-button featured-collection--collections-collection-lazyload-active"
+                                            class="featured-collection--collections-collection-lazyload-button active"
                                             data-collection="{{ collection_title | downcase }}"
                                             data-total-chunks="{{ paginate.pages }}"
-                                            data-url="{{ paginate.next.url }}"
+                                            data-url="{{ url }}"
                                         >
                                             show more
                                         </button>

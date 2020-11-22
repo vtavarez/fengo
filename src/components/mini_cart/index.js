@@ -8,17 +8,17 @@ class MiniCart {
         total: 0
     };
 
-    static init(){
+    static init() {
         this.#cart.forEach(cart => {
-            cart.addEventListener('click', e => {
-                e.stopPropagation();
-                switch (e.target.className) {
+            cart.addEventListener('click', event => {
+                event.stopPropagation();
+                switch (event.target.className) {
                     case 'minicart--remove-icon':
-                        return this.removeProduct(e.target.dataset.productId);
+                        return this.removeProduct(event.target.dataset.productId);
                     case 'minicart--increase-quantity-btn':
-                        return this.#increaseQuantity(e.target.parentElement.dataset.productId);
+                        return this.#increaseQuantity(event.target.parentElement.dataset.productId);
                     case 'minicart--decrease-quantity-btn':
-                        return this.#decreaseQuantity(e.target.parentElement.dataset.productId);
+                        return this.#decreaseQuantity(event.target.parentElement.dataset.productId);
                     default:
                         break;
                 }
@@ -28,7 +28,7 @@ class MiniCart {
         this.#render();
     }
 
-    static formatCurrency($){
+    static formatCurrency($) {
         const currency = new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD',
@@ -38,8 +38,8 @@ class MiniCart {
         return currency.format($ * 0.01);
     }
 
-    static addProduct(product, qty){
-        if(!this.state.cart[product.id]){
+    static addProduct(product, qty) {
+        if (!this.state.cart[product.id]) {
             this.state.total += (product.price * qty);
             this.state.cart[product.id] = product;
             this.state.cart[product.id].quantity = qty;
@@ -51,7 +51,6 @@ class MiniCart {
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 this.#render();
                 toggleSuccess(`${product.title} was successfully added to cart!`);
             })
@@ -61,8 +60,8 @@ class MiniCart {
         }
     }
 
-    static removeProduct(productId){
-        if(this.state.cart[productId]){
+    static removeProduct(productId) {
+        if (this.state.cart[productId]) {
             fetch('/cart/update.js', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -78,8 +77,8 @@ class MiniCart {
         }
     }
 
-    static updateProduct(productId, quantity){
-        if(this.state.cart[productId]){
+    static updateProduct(productId, quantity) {
+        if (this.state.cart[productId]) {
             if(quantity > this.state.cart[productId].quantity){
                 this.state.total += (this.state.cart[productId].price * (quantity - this.state.cart[productId].quantity));
                 this.state.cart[productId].quantity = quantity;
@@ -103,23 +102,23 @@ class MiniCart {
         }
     }
 
-    static #increaseQuantity(productId){
+    static #increaseQuantity(productId) {
         const quantity = this.state.cart[productId].quantity + 1;
         this.updateProduct(productId, quantity);
     }
 
-    static #decreaseQuantity(productId){
+    static #decreaseQuantity(productId) {
         if(this.state.cart[productId].quantity > 1){
             const quantity = this.state.cart[productId].quantity - 1;
             this.updateProduct(productId, quantity);
         }
     }
 
-    static #render(){
+    static #render() {
         const cart = Object.values(this.state.cart);
         let products = '';
 
-        for (let product of cart){
+        for (let product of cart) {
             products += `
                 <div class="minicart--product">
                     <div class="row">

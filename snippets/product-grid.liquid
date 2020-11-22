@@ -1,10 +1,84 @@
 <div class="product">
+    <div class="product--image">
+        <a class="product--image-url" href="{{ product.url }}">
+            {%- comment -%} Image {%- endcomment -%}
+            <picture>
+                <source srcset="{{ product.featured_image | img_url: '280x' }}" media="(min-width: 992px)">
+                <source srcset="{{ product.featured_image | img_url: '180x' }}" media="(min-width: 768px)">
+                <img class="product--image-src" src="{{ product.featured_image | img_url: '380x' }}" alt="{{ product.title | escape }}">
+            </picture>
+        </a>
+    </div>
+    <div class="product--details">
+        <div class="container no-padding">
+            <div class="row no-gutters">
+                {%- comment -%} Title {%- endcomment -%}
+                <div class="col-6 col-md-12">
+                    <div class="product--details-title">
+                        {% assign product_details = product.title | split: ' | ' %}
+                        {% assign product_title = product_details[1] %}
+                        {{ product_title | downcase }}
+                    </div>
+                </div>
+                {%- comment -%} Price {%- endcomment -%}
+                <div class="col-6 col-md-12">
+                    <div class="product--details-price-{{ product.id }} product--details-price">
+                        {% if product.compare_at_price_varies %}
+                            {% if product.price < product.compare_at_price_max %}
+                                <span class="product--details-price-compare">
+                                    {{ product.compare_at_price | money_without_trailing_zeros }}-{{ product.compare_at_price_max | money_without_trailing_zeros }}
+                                </span>
+                                {{ product.price | money_without_trailing_zeros }}-{{ product.price_max | money_without_trailing_zeros }}
+                            {% else %}
+                                {{ product.price | money_without_trailing_zeros }}-{{ product.price_max | money_without_trailing_zeros }}
+                            {% endif %}
+                        {% else %}
+                            {% if product.price < product.compare_at_price_max %}
+                                <span class="product--details-price-compare">
+                                    {{ product.compare_at_price | money_without_trailing_zeros }}
+                                </span>
+                                {{ product.price | money_without_trailing_zeros }}
+                            {% elsif product.price_varies %}
+                                {{ product.price | money_without_trailing_zeros }}-{{ product.price_max | money_without_trailing_zeros }}
+                            {% else %}
+                                {{ product.price | money_without_trailing_zeros }}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {%- comment -%} Badge {%- endcomment -%}
+    {% assign days = 7 %}
+    {% assign period_time = days | times: 24 | times: 60 | times: 60 %}
+    {% assign date_now = 'now' | date:'%s' %}
+    {% assign date_finished = product.published_at | date:'%s' | plus: period_time | date:'%s' %}
+    {% if product.available == false %}
+        <div class="product--badge">
+            out of stock
+        </div>
+    {% elsif product.price < product.compare_at_price_max %}
+        <div class="product--badge-discount">
+            {% assign percentage = product.compare_at_price
+                | minus: product.price
+                | times: 100
+                | divided_by: product.compare_at_price_max
+            %}
+            {{ percentage | prepend: '-' | append: '%' }}
+        </div>
+    {% elsif date_finished > date_now %}
+        <div class="product--badge-new">
+            new
+        </div>
+    {% endif %}
     <form
-        id="{{ product.id }}"
         {% if product.has_only_default_variant %}
         data-product-id="{{ product.variants[0].id }}"
+        data-has-options="false"
         {% else %}
         data-product-id="{{ product.id }}"
+        data-has-options="true"
         {% endif %}
         data-product-title="{{ product.title }}"
         data-product-image="{{ product.featured_image | img_url }}"
@@ -12,77 +86,6 @@
         data-product-price="{{ product.price }}"
         data-product-compare-price="{{ product.compare_at_price }}"
     >
-        <a class="product--url" href="{{ product.url }}">
-            {%- comment -%} Image {%- endcomment -%}
-            <picture>
-                <source srcset="{{ product.featured_image | img_url: '280x' }}" media="(min-width: 992px)">
-                <source srcset="{{ product.featured_image | img_url: '180x' }}" media="(min-width: 768px)">
-                <img class="product--image" src="{{ product.featured_image | img_url: '380x' }}" alt="{{ product.title | escape }}">
-            </picture>
-            <div class="product--details">
-                <div class="container no-padding">
-                    <div class="row no-gutters">
-                        {%- comment -%} Title {%- endcomment -%}
-                        <div class="col-6 col-md-12">
-                            <div class="product--details-title">
-                                {% assign product_details = product.title | split: ' | ' %}
-                                {% assign product_title = product_details[1] %}
-                                {{ product_title | downcase }}
-                            </div>
-                        </div>
-                        {%- comment -%} Price {%- endcomment -%}
-                        <div class="col-6 col-md-12">
-                            <div class="product--details-price-{{ product.id }} product--details-price">
-                                {% if product.compare_at_price_varies %}
-                                    {% if product.price < product.compare_at_price_max %}
-                                        <span class="product--details-price-compare">
-                                            {{ product.compare_at_price | money_without_trailing_zeros }}-{{ product.compare_at_price_max | money_without_trailing_zeros }}
-                                        </span>
-                                        {{ product.price | money_without_trailing_zeros }}-{{ product.price_max | money_without_trailing_zeros }}
-                                    {% else %}
-                                        {{ product.price | money_without_trailing_zeros }}-{{ product.price_max | money_without_trailing_zeros }}
-                                    {% endif %}
-                                {% else %}
-                                    {% if product.price < product.compare_at_price_max %}
-                                        <span class="product--details-price-compare">
-                                            {{ product.compare_at_price | money_without_trailing_zeros }}
-                                        </span>
-                                        {{ product.price | money_without_trailing_zeros }}
-                                    {% elsif product.price_varies %}
-                                        {{ product.price | money_without_trailing_zeros }}-{{ product.price_max | money_without_trailing_zeros }}
-                                    {% else %}
-                                        {{ product.price | money_without_trailing_zeros }}
-                                    {% endif %}
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {%- comment -%} Badge {%- endcomment -%}
-            {% assign days = 7 %}
-            {% assign period_time = days | times: 24 | times: 60 | times: 60 %}
-            {% assign date_now = 'now' | date:'%s' %}
-            {% assign date_finished = product.published_at | date:'%s' | plus: period_time | date:'%s' %}
-            {% if product.available == false %}
-                <div class="product--badge">
-                    out of stock
-                </div>
-            {% elsif product.price < product.compare_at_price_max %}
-                <div class="product--badge-discount">
-                    {% assign percentage = product.compare_at_price
-                        | minus: product.price
-                        | times: 100
-                        | divided_by: product.compare_at_price_max
-                    %}
-                    {{ percentage | prepend: '-' | append: '%' }}
-                </div>
-            {% elsif date_finished > date_now %}
-                <div class="product--badge-new">
-                    new
-                </div>
-            {% endif %}
-        </a>
         {%- comment -%} Options {%- endcomment -%}
         {% if product.available and product.has_only_default_variant == false %}
             <div class="product--options">
@@ -91,7 +94,11 @@
                     <div class="product--option1">
                         {% for variant in product.variants %}
                             {% unless used contains variant.option1 or variant.available == false %}
-                                <label for="size-{{ variant.id }}" class="product--option1-label">
+                                <label
+                                    for="size-{{ variant.id }}"
+                                    class="product--option1-label"
+                                    tabindex="0"
+                                >
                                     <input
                                         class="product--option1-input"
                                         id="size-{{ variant.id }}"
@@ -115,7 +122,11 @@
                     <div class="product--option1">
                         {% for variant in product.variants %}
                             {% unless used contains variant.option1 or variant.available == false %}
-                                <label for="color-{{ variant.id }}" class="product--option1-label">
+                                <label
+                                    for="color-{{ variant.id }}"
+                                    class="product--option1-label"
+                                    tabindex="0"
+                                >
                                     <input
                                         class="product--option1-input"
                                         id="color-{{ variant.id }}"
@@ -149,18 +160,18 @@
                             disabled="disabled"
                             {% endif %}
                             aria-label="add to cart"
-                            class="product--button-{{ product.id }} product--buttons-button"
+                            class="product--buttons-button active"
                         >
                             add to bag
                         </button>
-                        <div class="product--buttons-loader-{{ product.id }} product--buttons-loader">
+                        <div class="product--buttons-loader">
                             {% include 'icon-loader.svg' %}
                         </div>
                     </div>
                     <div class="col-6">
                         <a  role="navigation"
                             aria-roledescription="product page"
-                            class="product--buttons-button"
+                            class="product--buttons-button active"
                             href="{{ product.url }}"
                         >
                             more info

@@ -34,7 +34,7 @@ export const toggleWarning = function (message) {
 
     warningBar.textContent = message;
     warningBar.classList.toggle('notification-bar-active');
-    setTimeout(() => warningBar.classList.toggle('notification-bar-active'), 1500);
+    setTimeout(() => warningBar.classList.toggle('notification-bar-active'), 2000);
 }
 
 export const toggleSuccess = function (message) {
@@ -46,5 +46,5 @@ export const toggleSuccess = function (message) {
 
     successBar.textContent = message;
     successBar.classList.toggle('notification-bar-active');
-    setTimeout(() => successBar.classList.toggle('notification-bar-active'), 1500);
+    setTimeout(() => successBar.classList.toggle('notification-bar-active'), 2000);
 }
