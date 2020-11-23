@@ -3,7 +3,7 @@
         <div class="row">
             {%- comment -%} Tabs {%- endcomment -%}
             <div class="col-12">
-                <ul class="featured-collection--tabs">
+                <ul id="featured-collection--tabs-{{ section.id }}" class="featured-collection--tabs">
                     {% for block in section.blocks %}
                         {% assign collection_title = collections[block.settings.collection].title %}
                         <li class="featured-collection--tabs-tab {% if forloop.first %}featured-collection--tabs-tab-active{% endif %}"
@@ -19,7 +19,7 @@
             </div>
             {%- comment -%} Products {%- endcomment -%}
             <div class="col-12">
-                <div class="featured-collection--collections">
+                <div id="featured-collection--collections-{{ section.id }}" class="featured-collection--collections">
                     {% for block in section.blocks %}
                         {% assign collection_title = collections[block.settings.collection].title %}
                         <div class="featured-collection--collections-collection {% if forloop.first %}featured-collection--collections-collection-active{% endif %}" {{ block.shopify_attributes }}>

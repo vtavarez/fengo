@@ -1,7 +1,8 @@
 import MiniCart from '../mini_cart';
-import { toggleWarning } from '../../utils';
+import { toggleWarning, toggleSpinner, formatCurrency } from '../../utils';
 class FeaturedCollection {
     constructor() {
+        this.minicart = new MiniCart();
         this.tabs = document.querySelector('.featured-collection--tabs');
         this.collections = document.querySelector('.featured-collection--collections');
         this.tab = this.tabs?.children;
@@ -11,12 +12,12 @@ class FeaturedCollection {
             activeCollection: 0,
             productPrice: null,
             productVariants: null,
-            productOption2: null,
+            productOptions2: null,
             productId: null,
             selectedOption1: null,
             selectedOption2: null,
             selectedVariant: null,
-            option2Type: null
+            option2Type: null,
         };
 
         this.tabs?.addEventListener('click', this.selectedCollection.bind(this));
@@ -25,23 +26,23 @@ class FeaturedCollection {
         this.collections?.addEventListener('keyup', this.dispatchAction.bind(this));
     }
 
-    dispatchAction(event) {
-        event.stopPropagation();
-        if (event.type === 'click' || event.key === ' ') {
-            if(event.target.classList[0] === 'featured-collection--collections-collection-lazyload-button'){
-                this.lazyLoad(event);
+    dispatchAction(evt) {
+        evt.stopPropagation();
+        if (evt.type === 'click' || evt.key === ' ') {
+            if(evt.target.classList[0] === 'featured-collection--collections-collection-lazyload-button'){
+                this.lazyLoad(evt);
             }
-            if(event.target.className === 'product--option1-input'){
-                this.selectedOption1(event);
+            if(evt.target.className === 'product--option1-input'){
+                this.selectedOption1(evt);
             }
-            if(event.target.className === 'product--option2-input'){
-                this.selectedOption2(event);
+            if(evt.target.className === 'product--option2-input'){
+                this.selectedOption2(evt);
             }
         }
     }
 
     resetState() {
-        this.state.productOption2?.replaceChildren();
+        this.state.productOptions2?.replaceChildren();
         this.state = {
             ...this.state,
             productPrice: null,
@@ -51,7 +52,7 @@ class FeaturedCollection {
             selectedOption1: null,
             selectedOption2: null,
             selectedVariant: null,
-            option2Type: null
+            option2Type: null,
         }
     }
 
@@ -66,10 +67,11 @@ class FeaturedCollection {
         .toggle('featured-collection--collections-collection-active');
     }
 
-    selectedCollection(event) {
-        event.stopPropagation();
-        const selectedCollection = event.target.dataset.collection;
-        if(selectedCollection !== this.state.activeCollection){
+    selectedCollection(evt) {
+        evt.stopPropagation();
+        const selectedCollection = evt.target.dataset.collection;
+
+        if (selectedCollection !== this.state.activeCollection) {
             this.toggleCollection();
             this.state.activeCollection = selectedCollection;
             this.toggleCollection();
@@ -98,21 +100,21 @@ class FeaturedCollection {
             .productPrice
             .innerHTML = `
                 <span class="product--details-price-compare">
-                ${MiniCart.formatCurrency(this.state.selectedVariant.compare_at_price)}
+                ${formatCurrency(this.state.selectedVariant.compare_at_price)}
                 </span>
-                ${MiniCart.formatCurrency(this.state.selectedVariant.price)}
+                ${formatCurrency(this.state.selectedVariant.price)}
             `;
             return;
         }
         this
         .state
         .productPrice
-        .textContent = MiniCart.formatCurrency(this.state.selectedVariant.price);
+        .textContent = formatCurrency(this.state.selectedVariant.price);
     }
 
     enableOption2() {
         const fragment = document.createDocumentFragment();
-        const availableOption2 = this
+        const availableOptions2 = this
         .state
         .productVariants
         .filter(variant => {
@@ -120,25 +122,26 @@ class FeaturedCollection {
                 return variant;
             }
         });
+        const totalOptions2 = availableOptions2.length;
 
         if(!this
             .state
-            .productOption2 || this
+            .productOptions2 || this
             .state
-            .productOption2
+            .productOptions2
             .className !== `product--option2-${this.state.productId}`
         ){
-            this.state.productOption2 = this
+            this.state.productOptions2 = this
             .collection[this.state.activeCollection]
             .querySelector(`.product--option2-${this.state.productId}`);
         }
 
-        availableOption2
-        .forEach(({ id, option2 }) => {
+        for (let i = 0; i < totalOptions2; i++) {
+            const { id, option2 } = availableOptions2[i];
             const label = document.createElement('label');
             label.setAttribute('tabindex', '0');
             label.className = 'product--option2-label';
-            if(this.state.option2Type === 'Color'){
+            if (this.state.option2Type === 'Color') {
                 label.setAttribute('for', `color-${id}`)
                 label.innerHTML = `
                     <input
@@ -151,7 +154,7 @@ class FeaturedCollection {
                     <span style="background-color:${option2};"></span>
                 `;
             }
-            if(this.state.option2Type === 'Size'){
+            if (this.state.option2Type === 'Size') {
                 label.setAttribute('for', `size-${id}`)
                 label.innerHTML = `
                     <input
@@ -167,19 +170,19 @@ class FeaturedCollection {
                 `;
             }
             fragment.appendChild(label);
-        });
+        }
 
-        this.state.productOption2.replaceChildren(fragment);
+        this.state.productOptions2.replaceChildren(fragment);
     }
 
-    selectedOption1(event) {
-        this.state.productId = event.target.dataset.productId;
-        this.state.productVariants = JSON.parse(event.target.dataset.variants);
-        this.state.selectedOption1 = event.target.value;
-        this.state.productOption2 = Boolean(event.target.dataset.option2);
-        this.state.option2Type = event.target.dataset.option2;
+    selectedOption1(evt) {
+        this.state.productId = evt.target.dataset.productId;
+        this.state.productVariants = JSON.parse(evt.target.dataset.variants);
+        this.state.selectedOption1 = evt.target.value;
+        this.state.productOptions2 = Boolean(evt.target.dataset.option2);
+        this.state.option2Type = evt.target.dataset.option2;
 
-        if (this.state.productOption2) {
+        if (this.state.productOptions2) {
            this.enableOption2();
            return;
         }
@@ -192,8 +195,8 @@ class FeaturedCollection {
         this.updateProductDetails();
     }
 
-    selectedOption2(event) {
-        this.state.selectedOption2 = event.target.value;
+    selectedOption2(evt) {
+        this.state.selectedOption2 = evt.target.value;
         this.state.selectedVariant = this
         .state
         .productVariants
@@ -208,74 +211,63 @@ class FeaturedCollection {
         this.updateProductDetails();
     }
 
-    addProductToCart(event) {
-        event.preventDefault();
-        const submitButton = event.submitter;
-        const loader = submitButton.nextElementSibling;
-        const hasOptions = JSON.parse(event.target.dataset.hasOptions);
+    addProductToCart(evt) {
+        evt.preventDefault();
+        const submitter = evt.submitter;
+        const productHasVariants = JSON.parse(evt.target.dataset.hasVariants);
         const product = {
-            id: event.target.dataset.productId,
-            title: event.target.dataset.productTitle,
-            featured_image: event.target.dataset.productImage,
-            handle: event.target.dataset.productHandle,
-            price: event.target.dataset.productPrice,
-            compare_at_price: event.target.dataset.productComparePrice
+            id: evt.target.dataset.productId,
+            title: evt.target.dataset.productTitle,
+            featured_image: evt.target.dataset.productImage,
+            handle: evt.target.dataset.productHandle,
+            price: evt.target.dataset.productPrice,
+            compare_at_price: evt.target.dataset.productComparePrice,
         }
 
-        if (hasOptions) {
-            if (!this.state.selectedVariant) {
-                if (product.id !== this.state.productId) {
-                    return toggleWarning('Please select options for the chosen product.');
-                }
-                if (!this.state.selectedOption2) {
-                    if (this.state.option2Type == 'Size') {
-                        return toggleWarning('Please select a Size option.');
-                    }
-                    if (this.state.option2Type == 'Color') {
-                        return toggleWarning('Plase select a Color option.');
-                    }
-                }
+        if (productHasVariants && !this.state.selectedVariant) {
+            if (product.id !== this.state.productId) {
+                return toggleWarning('Please select options for the chosen product.');
+            }
+            if (!this.state.selectedOption2 && this.state.option2Type == 'Size') {
+                return toggleWarning('Please select a Size option.');
+            }
+            if (!this.state.selectedOption2 && this.state.option2Type == 'Color') {
+                return toggleWarning('Plase select a Color option.');
             }
         }
 
-        submitButton.classList.toggle('active');
-        loader.classList.toggle('active');
+        toggleSpinner(submitter);
 
         if (this.state.selectedVariant) {
-            MiniCart.addProduct({
+            this.minicart.addProduct({
                 ...product,
                 ...this.state.selectedVariant,
                 title: product.title,
                 featured_image: product.featured_image
-            }, 1);
-            event.target.reset();
-            this.resetState();
-            submitButton.classList.toggle('active');
-            loader.classList.toggle('active');
+            }, 1, () => {
+                evt.target.reset();
+                this.resetState();
+                toggleSpinner(submitter);
+            });
             return;
         }
 
-        MiniCart.addProduct(product, 1);
-        event.target.reset();
-        this.resetState();
-        submitButton.classList.toggle('active');
-        loader.classList.toggle('active');
+        this.minicart.addProduct(product, 1, () => {
+            evt.target.reset();
+            this.resetState();
+            toggleSpinner(submitter);
+        });
+
     }
 
-    lazyLoad(event) {
-        const totalChunks = parseInt(event.target.dataset.totalChunks);
-        const url = event.target.dataset.url;
-        const button = event.target;
-        const loader = event.target.nextElementSibling;
+    lazyLoad(evt) {
+        const totalChunks = parseInt(evt.target.dataset.totalChunks);
+        const url = evt.target.dataset.url;
+        const submitter = evt.target;
+        const loader = evt.target.nextElementSibling;
         const collection = this.collection[this.state.activeCollection].firstElementChild;
 
-        button
-        .classList
-        .remove('active');
-
-        loader
-        .classList
-        .add('active');
+        toggleSpinner(submitter);
 
         fetch(`${url}page=${this.state.chunk}`, {
             method: 'GET',
@@ -293,15 +285,9 @@ class FeaturedCollection {
 
             collection.appendChild(fragment);
 
-            this.state.chunk < totalChunks ? this.state.chunk : button.setAttribute('disabled','disabled');
+            this.state.chunk < totalChunks ? this.state.chunk++ : button.setAttribute('disabled','disabled');
 
-            loader
-            .classList
-            .remove('active');
-
-            button
-            .classList
-            .add('active');
+            toggleSpinner(submitter);
         });
     }
 }

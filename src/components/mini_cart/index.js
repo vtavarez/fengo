@@ -1,4 +1,4 @@
-import { toggleWarning, toggleSuccess } from '../../utils';
+import { toggleWarning, toggleSuccess, formatCurrency } from '../../utils';
 class MiniCart {
     static #cart = document.querySelectorAll('.minicart--products');
     static #shipping = document.querySelectorAll('.minicart--totals-shipping');
@@ -8,41 +8,31 @@ class MiniCart {
         total: 0
     };
 
-    static init() {
-        this.#cart.forEach(cart => {
+    constructor(){
+        this.constructor.#cart.forEach(cart => {
             cart.addEventListener('click', event => {
                 event.stopPropagation();
                 switch (event.target.className) {
                     case 'minicart--remove-icon':
                         return this.removeProduct(event.target.dataset.productId);
                     case 'minicart--increase-quantity-btn':
-                        return this.#increaseQuantity(event.target.parentElement.dataset.productId);
+                        return this._increaseQuantity(event.target.parentElement.dataset.productId);
                     case 'minicart--decrease-quantity-btn':
-                        return this.#decreaseQuantity(event.target.parentElement.dataset.productId);
+                        return this._decreaseQuantity(event.target.parentElement.dataset.productId);
                     default:
                         break;
                 }
             });
         });
 
-        this.#render();
+        this._render();
     }
 
-    static formatCurrency($) {
-        const currency = new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            maximumFractionDigits: 2
-        });
-
-        return currency.format($ * 0.01);
-    }
-
-    static addProduct(product, qty) {
-        if (!this.state.cart[product.id]) {
-            this.state.total += (product.price * qty);
-            this.state.cart[product.id] = product;
-            this.state.cart[product.id].quantity = qty;
+    addProduct(product, qty, cb) {
+        if (!MiniCart.state.cart[product.id]) {
+            MiniCart.state.total += (product.price * qty);
+            MiniCart.state.cart[product.id] = product;
+            MiniCart.state.cart[product.id].quantity = qty;
 
             fetch('/cart/add.js', {
                 method: 'POST',
@@ -50,9 +40,10 @@ class MiniCart {
                 body: JSON.stringify({ items: [{ id: product.id, quantity: qty }] })
             })
             .then(response => response.json())
-            .then(data => {
-                this.#render();
+            .then(() => {
+                this._render();
                 toggleSuccess(`${product.title} was successfully added to cart!`);
+                cb();
             })
             .catch(error => console.log(error));
         } else {
@@ -60,32 +51,32 @@ class MiniCart {
         }
     }
 
-    static removeProduct(productId) {
-        if (this.state.cart[productId]) {
+    removeProduct(productId) {
+        if (MiniCart.state.cart[productId]) {
             fetch('/cart/update.js', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ updates: { [productId]: 0 }})
             })
             .then(response => response.json())
-            .then(data => {
-                this.state.total -= (this.state.cart[productId].price * this.state.cart[productId].quantity);
-                delete this.state.cart[productId];
-                this.#render();
+            .then(() => {
+                MiniCart.state.total -= (MiniCart.state.cart[productId].price * MiniCart.state.cart[productId].quantity);
+                delete MiniCart.state.cart[productId];
+                this._render();
             })
             .catch(error => console.error(error));
         }
     }
 
-    static updateProduct(productId, quantity) {
-        if (this.state.cart[productId]) {
-            if(quantity > this.state.cart[productId].quantity){
-                this.state.total += (this.state.cart[productId].price * (quantity - this.state.cart[productId].quantity));
-                this.state.cart[productId].quantity = quantity;
+    updateProduct(productId, quantity) {
+        if (MiniCart.state.cart[productId]) {
+            if (quantity > MiniCart.state.cart[productId].quantity) {
+                MiniCart.state.total += (MiniCart.state.cart[productId].price * (quantity - MiniCart.state.cart[productId].quantity));
+                MiniCart.state.cart[productId].quantity = quantity;
             }
-            if(quantity < this.state.cart[productId].quantity){
-                this.state.total -= (this.state.cart[productId].price * (this.state.cart[productId].quantity - quantity));
-                this.state.cart[productId].quantity = quantity;
+            if (quantity < MiniCart.state.cart[productId].quantity) {
+                MiniCart.state.total -= (MiniCart.state.cart[productId].price * (MiniCart.state.cart[productId].quantity - quantity));
+                MiniCart.state.cart[productId].quantity = quantity;
             }
 
             fetch('/cart/update.js', {
@@ -96,26 +87,26 @@ class MiniCart {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                this.#render();
+                this._render();
             })
             .catch(error => console.error(error));
         }
     }
 
-    static #increaseQuantity(productId) {
-        const quantity = this.state.cart[productId].quantity + 1;
+    _increaseQuantity(productId) {
+        const quantity = MiniCart.state.cart[productId].quantity + 1;
         this.updateProduct(productId, quantity);
     }
 
-    static #decreaseQuantity(productId) {
-        if(this.state.cart[productId].quantity > 1){
-            const quantity = this.state.cart[productId].quantity - 1;
+    _decreaseQuantity(productId) {
+        if(MiniCart.state.cart[productId].quantity > 1){
+            const quantity = MiniCart.state.cart[productId].quantity - 1;
             this.updateProduct(productId, quantity);
         }
     }
 
-    static #render() {
-        const cart = Object.values(this.state.cart);
+    _render() {
+        const cart = Object.values(MiniCart.state.cart);
         let products = '';
 
         for (let product of cart) {
@@ -187,14 +178,14 @@ class MiniCart {
                             <p class="minicart--product-price">
                                 ${product.price < product.compare_at_price ? (
                                     `<span aria-label="product price" class="strikeout-price">
-                                        ${this.formatCurrency(product.compare_at_price)}
+                                        ${formatCurrency(product.compare_at_price)}
                                     </span>
                                     <span aria-label="product sale price" class="price">
-                                        ${this.formatCurrency(product.price)}
+                                        ${formatCurrency(product.price)}
                                     </span>`
                                 ) : (
                                     `<span aria-label="product sale price" class="price">
-                                        ${this.formatCurrency(product.price)}
+                                        ${formatCurrency(product.price)}
                                     </span>`
                                     )
                                 }
@@ -234,12 +225,10 @@ class MiniCart {
             `;
         }
 
-        this.#cart.forEach(cart => { cart.innerHTML = products; });
-        this.#total.forEach(total => { total.textContent = this.formatCurrency(this.state.total)});
-        localStorage.setItem('minicart', JSON.stringify(this.state));
+        MiniCart.#cart.forEach(cart => { cart.innerHTML = products; });
+        MiniCart.#total.forEach(total => { total.textContent = formatCurrency(MiniCart.state.total)});
+        localStorage.setItem('minicart', JSON.stringify(MiniCart.state));
     }
 }
-
-MiniCart.init();
 
 export default MiniCart;

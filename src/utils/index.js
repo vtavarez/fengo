@@ -1,9 +1,5 @@
 export const trapFocus = function (e) {
-    let focusableEls = null;
-
-    if (!focusableEls) {
-       focusableEls = e.currentTarget.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), input[type="text"]:not([disabled])');
-    }
+    let focusableEls = e.currentTarget.querySelectorAll('a[href]:not([disabled]), button:not([disabled]), input[type="text"]:not([disabled])');
 
     const firstFocusableEl = focusableEls[0];
     const lastFocusableEl = focusableEls[focusableEls.length - 1];
@@ -25,26 +21,37 @@ export const trapFocus = function (e) {
     }
 }
 
-export const toggleWarning = function (message) {
-    let warningBar = null;
+export const formatCurrency = function ($) {
+    const currency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 2
+    });
 
-    if(!warningBar) {
-        warningBar = document.querySelector('.notification-bar-warning');
+    return currency.format($ * 0.01);
+}
+
+export const toggleWarning = function (message) {
+    if(!window.theme.warningBar){
+        window.theme.warningBar = document.querySelector('.notification-bar-warning');
     }
 
-    warningBar.textContent = message;
-    warningBar.classList.toggle('notification-bar-active');
-    setTimeout(() => warningBar.classList.toggle('notification-bar-active'), 2000);
+    window.theme.warningBar.textContent = message;
+    window.theme.warningBar.classList.toggle('notification-bar-active');
+    setTimeout(() => window.theme.warningBar.classList.toggle('notification-bar-active'), 2000);
 }
 
 export const toggleSuccess = function (message) {
-    let successBar = null;
-
-    if(!successBar) {
-        successBar = document.querySelector('.notification-bar-success');
+    if(!window.theme.successBar){
+        window.theme.successBar = document.querySelector('.notification-bar-success');
     }
 
-    successBar.textContent = message;
-    successBar.classList.toggle('notification-bar-active');
-    setTimeout(() => successBar.classList.toggle('notification-bar-active'), 2000);
+    window.theme.successBar.textContent = message;
+    window.theme.successBar.classList.toggle('notification-bar-active');
+    setTimeout(() => window.theme.successBar.classList.toggle('notification-bar-active'), 2000);
+}
+
+export const toggleSpinner = function (submitter) {
+    submitter.classList.toggle('active');
+    submitter.nextElementSibling.classList.toggle('active');
 }

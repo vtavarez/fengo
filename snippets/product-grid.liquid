@@ -75,10 +75,10 @@
     <form
         {% if product.has_only_default_variant %}
         data-product-id="{{ product.variants[0].id }}"
-        data-has-options="false"
+        data-has-variants="false"
         {% else %}
         data-product-id="{{ product.id }}"
-        data-has-options="true"
+        data-has-variants="true"
         {% endif %}
         data-product-title="{{ product.title }}"
         data-product-image="{{ product.featured_image | img_url }}"
