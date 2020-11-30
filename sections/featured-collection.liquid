@@ -1,4 +1,13 @@
 <section class="featured-collection">
+    {% assign app_type = 'featured-collection' %}
+
+    <script id="{{ section.id }}-{{ app_type }}">
+        window.theme.vue.availableApps.push({
+            type: "{{ app_type }}",
+            id: "{{ section.id }}"
+        });
+    </script>
+
     <div class="container">
         <div class="row">
             {%- comment -%} Tabs {%- endcomment -%}
@@ -6,7 +15,7 @@
                 <ul id="featured-collection--tabs-{{ section.id }}" class="featured-collection--tabs">
                     {% for block in section.blocks %}
                         {% assign collection_title = collections[block.settings.collection].title %}
-                        <li class="featured-collection--tabs-tab {% if forloop.first %}featured-collection--tabs-tab-active{% endif %}"
+                        <li class="featured-collection--tab {% if forloop.first %}featured-collection--tab-active{% endif %}"
                             data-collection="{{ forloop.index0 }}"
                             tabindex="0"
                             aria-label="{{ collection_title }}"
@@ -22,11 +31,11 @@
                 <div id="featured-collection--collections-{{ section.id }}" class="featured-collection--collections">
                     {% for block in section.blocks %}
                         {% assign collection_title = collections[block.settings.collection].title %}
-                        <div class="featured-collection--collections-collection {% if forloop.first %}featured-collection--collections-collection-active{% endif %}" {{ block.shopify_attributes }}>
+                        <div class="featured-collection--collection {% if forloop.first %}featured-collection--collection-active{% endif %}" {{ block.shopify_attributes }}>
                             {% paginate collections[block.settings.collection].products by section.settings.products_per_page %}
                                 <div class="row no-margin">
                                     {% for product in collections[block.settings.collection].products %}
-                                        <div class="featured-collection--collections-collection-product col-12 col-md-4 col-lg-3">
+                                        <div class="featured-collection--collection-product col-12 col-md-4 col-lg-3">
                                             {% include 'product-grid' with product: product %}
                                         </div>
                                     {% endfor %}
@@ -34,16 +43,16 @@
                                 {% unless paginate.parts.size < 1 %}
                                     {% assign url_array = paginate.next.url | split: 'page=' %}
                                     {% assign url = url_array[0] %}
-                                    <div class="featured-collection--collections-collection-lazyload">
+                                    <div class="featured-collection--collection-lazyload">
                                         <button
-                                            class="featured-collection--collections-collection-lazyload-button active"
+                                            class="featured-collection--collection-lazyload-button active"
                                             data-collection="{{ collection_title | downcase }}"
                                             data-total-chunks="{{ paginate.pages }}"
                                             data-url="{{ url }}"
                                         >
                                             show more
                                         </button>
-                                        <div class="featured-collection--collections-collection-lazyload-loader">
+                                        <div class="featured-collection--collection-lazyload-loader">
                                             {% include 'icon-loader.svg' %}
                                         </div>
                                     </div>

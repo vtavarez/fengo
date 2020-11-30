@@ -18,7 +18,7 @@
                             data-max-height="true"
                         {% endif %}
                     >
-                        {% include 'gallery-content' with
+                        {% render 'gallery-content' with
                             block: section.blocks[0],
                             srcset_sizes: 'x400|',
                             navigation: true,
@@ -53,7 +53,7 @@
                                         col-12 col-md-6
                                     {% endif %}
                                 ">
-                                    {% include 'gallery-content' with
+                                    {% render 'gallery-content' with
                                         block: section.blocks[1],
                                         srcset_sizes: '380x|480x|680x',
                                         navigation: true,
@@ -63,7 +63,7 @@
 
                                 {% unless section.blocks[2] == blank %}
                                     <div class="col-12 col-md-6">
-                                        {% include 'gallery-content' with
+                                        {% render 'gallery-content' with
                                             block: section.blocks[2],
                                             srcset_sizes: '380x|480x|680x',
                                             navigation: true,
@@ -75,13 +75,13 @@
 
                         {% else %}
 
-                            {% include 'gallery-content' with
+                            {% render 'gallery-content' with
                                 block: section.blocks[1],
                                 srcset_sizes: '380x|280x|480x',
                                 navigation: false,
                                 sectionId: section.id
                             %}
-                            {% include 'gallery-content' with
+                            {% render 'gallery-content' with
                                 block: section.blocks[2],
                                 srcset_sizes: '380x|280x|480x',
                                 navigation: false,
@@ -97,7 +97,7 @@
                     {% unless section.blocks[3] == blank %}
 
                     <div class="gallery--third col-12 col-md-6">
-                        {% include 'gallery-content' with
+                        {% render 'gallery-content' with
                             block: section.blocks[3],
                             srcset_sizes: 'x450',
                             navigation: false,
@@ -118,13 +118,13 @@
                     data-max-height="true"
                 {% endif %}
             >
-                {% include 'gallery-content' with
+                {% render 'gallery-content' with
                     block: section.blocks[4],
                     srcset_sizes: 'x710|',
                     navigation: false,
                     sectionId: section.id
                 %}
-                {% include 'gallery-content' with
+                {% render 'gallery-content' with
                     block: section.blocks[5],
                     srcset_sizes: '380x|280x|480x',
                     navigation: false,

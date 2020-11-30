@@ -40,7 +40,7 @@
 								my bag: {{ cart.item_count }} {{ cart.item_count | pluralize: 'item', 'item(s)' }}
 							</button>
 							{%- comment -%} Mini Cart Dropdown {%- endcomment -%}
-							{% include 'mini-cart' %}
+							{% render 'mini-cart' %}
 						</li>
 					</ul>
 				</div>
@@ -88,11 +88,11 @@
 								<div class="combobox--search-input-icon">
 
 									<span v-if="search.term">
-										{% include 'icon-loader.svg' %}
+										{% render 'icon-loader.svg' %}
 									</span>
 
 									<span v-else>
-										{% include 'icon-search.svg' %}
+										{% render 'icon-search.svg' %}
 									</span>
 
 								</div>
@@ -150,12 +150,12 @@
 											{{ menu_item.title }}
 
 											<span class="menu-desktop--item-icon" aria-hidden="true">
-												{% include 'icon-chevron.svg' %}
+												{% render 'icon-chevron.svg' %}
 											</span>
 										</button>
 
 										{%- comment -%} Desktop Menu Dropdown {%- endcomment -%}
-										{% include 'menu-desktop-dropdown' with menu: menu_item %}
+										{% render 'menu-desktop-dropdown' with menu: menu_item %}
 									</li>
 
 								{% endif %}
@@ -191,11 +191,11 @@
 											{{ menu_item.title }}
 
 											<span class="menu-desktop--item-icon" aria-hidden="true">
-												{% include 'icon-chevron.svg' %}
+												{% render 'icon-chevron.svg' %}
 											</span>
 										</button>
 										{%- comment -%} Desktop Menu Dropdown {%- endcomment -%}
-										{% include 'menu-desktop-dropdown' with menu: menu_item %}
+										{% render 'menu-desktop-dropdown' with menu: menu_item %}
 									</li>
 
 								{% endif %}
@@ -215,7 +215,7 @@
 							aria-labelledby="menu-mobile--title"
 						>
 							<span aria-hidden="true">
-								{% include 'icon-hamburger.svg' %}
+								{% render 'icon-hamburger.svg' %}
 							</span>
 							<span id="menu-mobile--title" class="menu-mobile--title">navigation</span>
 						</button>
@@ -230,7 +230,7 @@
 							class="menu-mobile--button-cart"
 						>
 							<span aria-hidden="true">
-								{% include 'icon-bag.svg' %}
+								{% render 'icon-bag.svg' %}
 							</span>
 							<span aria-label="cart total">
 								{{ cart.total_price | money }}
@@ -239,9 +239,9 @@
 					</div>
 				</div>
 				{%- comment -%} Mobile Menu Dropdown {%- endcomment -%}
-				{% include 'menu-mobile-dropdown' %}
+				{% render 'menu-mobile-dropdown' %}
 				{%- comment -%} Mini Cart Dropdown {%- endcomment -%}
-				{% include 'mini-cart' %}
+				{% render 'mini-cart' %}
 			</div>
 		</div>
 	</nav>

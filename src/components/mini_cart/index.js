@@ -82,7 +82,7 @@ class MiniCart {
             fetch('/cart/update.js', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ updates: { [productId]: this.state.cart[productId].quantity }})
+                body: JSON.stringify({ updates: { [productId]: MiniCart.state.cart[productId].quantity }})
             })
             .then(response => response.json())
             .then(data => {
@@ -231,4 +231,4 @@ class MiniCart {
     }
 }
 
-export default MiniCart;
+export default new MiniCart();

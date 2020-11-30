@@ -22,7 +22,7 @@
                 </div>
                 {%- comment -%} Price {%- endcomment -%}
                 <div class="col-6 col-md-12">
-                    <div class="product--details-price-{{ product.id }} product--details-price">
+                    <div id="product--price-{{ product.id }}" class="product--details-price">
                         {% if product.compare_at_price_varies %}
                             {% if product.price < product.compare_at_price_max %}
                                 <span class="product--details-price-compare">
@@ -73,45 +73,31 @@
         </div>
     {% endif %}
     <form
+        data-product-id="{{ product.id }}"
         {% if product.has_only_default_variant %}
-        data-product-id="{{ product.variants[0].id }}"
+        data-product="{{ product.handle }}"
         data-has-variants="false"
         {% else %}
-        data-product-id="{{ product.id }}"
         data-has-variants="true"
         {% endif %}
-        data-product-title="{{ product.title }}"
-        data-product-image="{{ product.featured_image | img_url }}"
-        data-product-handle="{{ product.handle }}"
-        data-product-price="{{ product.price }}"
-        data-product-compare-price="{{ product.compare_at_price }}"
     >
         {%- comment -%} Options {%- endcomment -%}
         {% if product.available and product.has_only_default_variant == false %}
             <div class="product--options">
                 {% if product.options[0] == 'Size' %}
                     {% assign used = '' %}
-                    <div class="product--option1">
+                    <div class="product--options1">
                         {% for variant in product.variants %}
                             {% unless used contains variant.option1 or variant.available == false %}
-                                <label
-                                    for="size-{{ variant.id }}"
-                                    class="product--option1-label"
-                                    tabindex="0"
-                                >
+                                <label tabindex="0">
                                     <input
-                                        class="product--option1-input"
-                                        id="size-{{ variant.id }}"
+                                        class="product--option1"
                                         type="radio"
                                         name="size"
                                         value="{{ variant.option1 }}"
-                                        data-product-id="{{ product.id }}"
-                                        data-variants="{{ product.variants | json | escape }}"
-                                        data-option2="{{ product.options[1] }}"
+                                        data-product="{{ product.handle }}"
                                     >
-                                    <span>
-                                        {{ variant.option1 }}
-                                    </span>
+                                    <span>{{ variant.option1 }}</span>
                                 </label>
                                 {% capture used %}{{ used }} {{ variant.option1 }}{% endcapture %}
                             {% endunless %}
@@ -119,23 +105,16 @@
                     </div>
                 {% elsif product.options[0] == 'Color' %}
                     {% assign used = '' %}
-                    <div class="product--option1">
+                    <div class="product--options1">
                         {% for variant in product.variants %}
                             {% unless used contains variant.option1 or variant.available == false %}
-                                <label
-                                    for="color-{{ variant.id }}"
-                                    class="product--option1-label"
-                                    tabindex="0"
-                                >
+                                <label tabindex="0">
                                     <input
-                                        class="product--option1-input"
-                                        id="color-{{ variant.id }}"
+                                        class="product--option1"
                                         type="radio"
                                         name="color"
                                         value="{{ variant.option1 }}"
-                                        data-product-id="{{ product.id }}"
-                                        data-variants="{{ product.variants | json | escape }}"
-                                        data-option2="{{ product.options[1] }}"
+                                        data-product="{{ product.handle }}"
                                     >
                                     <span style="background-color:{{ variant.option1 }};"></span>
                                 </label>
@@ -145,7 +124,7 @@
                     </div>
                 {% endif %}
                 {% if product.options[1] %}
-                    <div class="product--option2-{{ product.id }} product--option2"></div>
+                    <div id="product--options2-{{ product.id }}" class="product--options2"></div>
                 {% endif %}
             </div>
         {% endif %}

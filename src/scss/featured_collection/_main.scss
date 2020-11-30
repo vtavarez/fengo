@@ -13,54 +13,54 @@
     text-transform: uppercase;
     color: $featured-collection--color-primary;
 
-    &-tab {
-      display: block;
-      position: relative;
-      cursor: pointer;
-      height: 3rem;
-      text-align: center;
-      padding: .8rem 5.7rem;
-
-      &::after {
-        content: '';
-        display: none;
-        width: 100%;
-        height: .2rem;
-        background: $featured-collection--color-secondary;
-      }
-
-      &:focus-visible {
-        color: $featured-collection--color-secondary;
-
-        &::after {
-          display: block;
-        }
-      }
-
-      &-active {
-        color: $featured-collection--color-secondary;
-
-        &::after {
-          display: block;
-        }
-      }
-
-      @include media-breakpoint-up(md) {
-        height: 10rem;
-        padding: 4.18rem 3.1rem;
-      }
-
-      @include media-breakpoint-up(lg) {
-        padding: 4.18rem 6.36rem;
-      }
-    }
-
     @include media-breakpoint-up(md) {
       flex-direction: row;
     }
   }
 
-  &--collections-collection {
+  &--tab {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    height: 3rem;
+    text-align: center;
+    padding: .8rem 5.7rem;
+
+    &::after {
+      content: '';
+      display: none;
+      width: 100%;
+      height: .2rem;
+      background: $featured-collection--color-secondary;
+    }
+
+    &:focus-visible {
+      color: $featured-collection--color-secondary;
+
+      &::after {
+        display: block;
+      }
+    }
+
+    &-active {
+      color: $featured-collection--color-secondary;
+
+      &::after {
+        display: block;
+      }
+    }
+
+    @include media-breakpoint-up(md) {
+      height: 10rem;
+      padding: 4.18rem 3.1rem;
+    }
+
+    @include media-breakpoint-up(lg) {
+      padding: 4.18rem 6.36rem;
+    }
+  }
+
+  &--collection {
     position: relative;
     display: none;
     margin-left: -15px;

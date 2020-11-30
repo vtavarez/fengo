@@ -1,82 +1,71 @@
-import { Swiper as SwiperClass, Pagination, Navigation } from 'swiper/swiper.esm';
-import getAwesomeSwiper from 'vue-awesome-swiper/dist/exporter';
+import { Swiper, Pagination, Navigation } from 'swiper/swiper.esm';
 
-SwiperClass.use([Pagination, Navigation])
+Swiper.use([Pagination, Navigation]);
+export class Gallery {
+    slideshow;
+    prevButton;
+    nextButton;
 
-const { directive } = getAwesomeSwiper(SwiperClass);
+    constructor(sectionId) {
+        this.slideshow = document.getElementById(`gallery-slideshow-${sectionId}`);
+        this.prevButton = this.slideshow.querySelector('.swiper--button-prev');
+        this.nextButton = this.slideshow.querySelector('.swiper--button-next');
 
-class GallerySlideshow {
-    constructor(id){
-        this.sectionId = id;
-        this.appType = 'vue-gallery-slideshow';
-        this._appInstance = null;
-        this._mountingNode = `#vue-gallery-slideshow-${id}`;
-    }
-
-    getSectionId(){
-        return this.sectionId;
-    }
-
-    kill(){
-        this._appInstance.kill();
-    }
-
-    init(){
-        this._appInstance = new Vue({
-            el: this._mountingNode,
-            directives: {
-                swiper: directive
+        new Swiper(this.slideshow, {
+            pagination: {
+                el: '.content--slideshow-pagination',
+                type: 'bullets',
+                clickable: true,
+                bulletClass: 'content--slideshow-bullet',
+                bulletActiveClass: 'content--slideshow-bullet-active',
             },
-            data: {
-                options: {
-                    pagination: {
-                        el: '.content--slideshow-pagination',
-                        type: 'bullets',
-                        clickable: true,
-                        bulletClass: 'content--slideshow-bullet',
-                        bulletActiveClass: 'content--slideshow-bullet-active'
-                    },
-                    keyboard: true,
-                    containerModifierClass: 'content--slideshow',
-                },
-                controls: {
-                    prev: {
-                        disable: true
-                    },
-                    next: {
-                        disable: false
-                    }
-                }
-            },
-            methods: {
-                next() {
-                    this.slideshow.slideNext(500);
-
-                    if (!this.slideshow.isBeginning) {
-                        this.controls.prev.disable = false;
-                    }
-
-                    if(this.slideshow.isEnd){
-                        this.controls.next.disable = true;
-                    }
-                },
-                prev() {
-                    this.slideshow.slidePrev(500);
-
-                    if (!this.slideshow.isEnd) {
-                        this.controls.next.disable = false;
-                    }
-
-                    if(this.slideshow.isBeginning){
-                        this.controls.prev.disable = true;
-                    }
-                },
-                kill(){
-                    this.$destroy();
-                }
-            }
+            keyboard: true,
+            containerModifierClass: 'content--slideshow',
         });
+
+        this.slideshow?.addEventListener('click', this.dispatchEvent.bind(this));
+
+        // this.slideshow = this.slideshow?.swiper;
+    }
+
+    dispatchEvent(evt) {
+        if (evt.target.className === 'swiper--button-prev') {
+            this.prev()
+        }
+        if (evt.target.className === 'swiper--button-next') {
+            this.next()
+        }
+    }
+
+    next() {
+        this.slideshow.slideNext(500);
+
+        if (!this.slideshow.isBeginning) {
+            this.prevButton.removeAttribute('disabled');
+        }
+
+        if (this.slideshow.isEnd) {
+            this.nextButton.addAttribute('disabled');
+        }
+    };
+
+    prev() {
+        this.slideshow.slidePrev(500);
+
+        if (!this.slideshow.isEnd) {
+            this.nextButton.removeAttribute('disabled');
+        }
+
+        if (this.slideshow.isBeginning) {
+            this.prevButton.addAttribute('disabled');
+        }
+    };
+
+    init() {
+        console.log('blah');
+    }
+
+    kill() {
+        this.slideshow.removeEventListener('click');
     }
 }
-
-export default GallerySlideshow;

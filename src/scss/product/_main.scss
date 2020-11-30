@@ -148,9 +148,9 @@
     }
   }
 
-  &--option1,
-  &--option2 {
-    &-label {
+  &--options1,
+  &--options2 {
+    label {
       position: relative;
       cursor: pointer;
 
@@ -163,12 +163,6 @@
         &:checked + span {
           border: 2px solid $featured-collection--color-badge;
           color: $featured-collection--color-badge;
-        }
-
-        &:disabled + span {
-          border: 2px solid $featured-collection--color-primary;
-          color: $featured-collection--color-primary;
-          opacity: .5;
         }
       }
 
@@ -183,8 +177,8 @@
     }
   }
 
-  &--option2 {
-    &-label {
+  &--options2 {
+    label {
       margin-right: .625rem;
     }
   }
