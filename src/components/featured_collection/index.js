@@ -12,8 +12,8 @@ export class FeaturedCollection {
     };
 
     constructor(sectionId) {
-        this.tabs = document.getElementById(`featured-collection--tabs-${sectionId}`);
-        this.collections = document.getElementById(`featured-collection--collections-${sectionId}`);
+        this.tabs = document.querySelector(`#featured-collection--tabs-${sectionId}`);
+        this.collections = document.querySelector(`#featured-collection--collections-${sectionId}`);
         this.tab = this.tabs?.children;
         this.collection = this.collections?.children;
 

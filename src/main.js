@@ -2,7 +2,7 @@
 import './scss/theme.scss';
 //* Vue Components
 import Header from './components/header';
-import Slideshow from './components/slideshow';
+import { Slideshow } from './components/slideshow';
 import { Gallery } from './components/gallery';
 import { FeaturedCollection }  from './components/featured_collection';
 
@@ -10,8 +10,8 @@ let activeApps = [];
 const appTypeClass = [];
 
 //* register available app types classes
-appTypeClass['vue-slideshow'] = Slideshow;
-appTypeClass['gallery'] = Gallery;
+appTypeClass['slideshow'] = Slideshow;
+appTypeClass['gallery-slideshow'] = Gallery;
 appTypeClass['featured-collection'] = FeaturedCollection;
 window
     .theme

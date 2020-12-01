@@ -155,7 +155,7 @@
 										</button>
 
 										{%- comment -%} Desktop Menu Dropdown {%- endcomment -%}
-										{% render 'menu-desktop-dropdown' with menu: menu_item %}
+										{% render 'menu-desktop-dropdown' with menu_item as menu %}
 									</li>
 
 								{% endif %}
@@ -195,7 +195,7 @@
 											</span>
 										</button>
 										{%- comment -%} Desktop Menu Dropdown {%- endcomment -%}
-										{% render 'menu-desktop-dropdown' with menu: menu_item %}
+										{% render 'menu-desktop-dropdown' with menu_item as menu %}
 									</li>
 
 								{% endif %}

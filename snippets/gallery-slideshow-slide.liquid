@@ -1,0 +1,32 @@
+<div class="gallery--slideshow-slide">
+    {% if img_sizes.size == 1 %}
+        <img
+            class="gallery--banner"
+            src="{{ image | img_url: img_sizes[0] }}"
+            alt="{{ image.alt }}"
+        >
+    {% else %}
+        <picture>
+            <source
+                srcset="{{ image | img_url: img_sizes[2] }}"
+                media="(min-width: 992px)"
+            >
+            <source
+                srcset="{{ image | img_url: img_sizes[1] }}"
+                media="(min-width: 768px)"
+            >
+            <img
+                class="gallery--banner"
+                src="{{ image | img_url: img_sizes[0] }}"
+                alt="{{ image.alt }}"
+            >
+        </picture>
+    {% endif %}
+    <div class="gallery--slideshow-wrapper">
+        <a class="gallery--banner-link" href="{{ url }}">
+            <div class="gallery--banner-content">
+                {{ content }}
+            </div>
+        </a>
+    </div>
+</div>

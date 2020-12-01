@@ -1,91 +1,96 @@
-.swiper--initializing {
+.slideshow {
+  @extend .swiper-container;
+
+  &--initializing {
     &::after {
-        content: '';
-        display: block;
-        width: 100%;
-        height: 0;
-        padding: 56.25%;
+      content: '';
+      display: block;
+      width: 100%;
+      height: 0;
+      padding: 56.25%;
     }
-}
+  }
 
-.swiper--link {
-    display: block;
-    width: fit-content;
-    text-decoration: none;
-    font-size: 1rem;
+  &--slide {
+    @extend .swiper-slide;
+  }
 
-    &:hover {
-        text-decoration: none;
-    }
-
-    @include media-breakpoint-up(md){
-        font-size: 1.5rem;
-    }
-}
-
-.swiper--image {
+  &--image {
     display: block;
     width: 100%;
     max-height: 1070px;
     object-fit: cover;
     object-position: top;
-}
+  }
 
-.swiper--slide-content {
+  &--slide-content {
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
-    background-color: rgba(0,0,0,.3);
+    background-color: rgba(0, 0, 0, .3);
 
-    .container {
-        position: relative;
-        height: 100%;
+    &-container {
+      @extend .container;
+      position: relative;
+      height: 100%;
     }
-}
 
-.swiper--content {
-    position: absolute;
-    font-family: $cousine-bold, sans-serif;
-    font-size: 1.5rem;
-    color: $swiper--color-primary;
-    text-transform: uppercase;
-    width: fit-content;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    &-info {
+      position: absolute;
+      font-family: $cousine-bold, sans-serif;
+      font-size: 1.5rem;
+      color: $swiper--color-primary;
+      text-transform: uppercase;
+      width: fit-content;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
 
-    @include media-breakpoint-up(lg){
+      @include media-breakpoint-up(lg) {
         font-size: 3rem;
         left: unset;
         transform: translateY(-50%);
+      }
     }
-}
 
-.swiper--content-left {
+    &-link {
+      display: block;
+      width: fit-content;
+      text-decoration: none;
+      font-size: 1rem;
 
-    @include media-breakpoint-up(lg) {
+      &:hover {
+        text-decoration: none;
+      }
+
+      @include media-breakpoint-up(md) {
+        font-size: 1.5rem;
+      }
+    }
+
+    &-left {
+      @include media-breakpoint-up(lg) {
         left: 0;
+      }
     }
-}
 
-.swiper--content-right {
-
-    @include media-breakpoint-up(lg) {
+    &-right {
+      @include media-breakpoint-up(lg) {
         right: 0;
+      }
     }
-}
 
-.swiper--content-center {
-
-    @include media-breakpoint-up(lg){
+    &-center {
+      @include media-breakpoint-up(lg) {
         left: 50%;
         transform: translate(-50%, -50%);
+      }
     }
-}
+  }
 
-.swiper--button-prev,
-.swiper--button-next {
+  &--button-prev,
+  &--button-next {
     display: none;
     position: absolute;
     width: 2rem;
@@ -102,62 +107,74 @@
     transition: background-color .2s ease-in;
 
     &[aria-disabled="true"] {
-        border: 3px solid lightgray;
-        fill: lightgray;
-        opacity: .5;
+      border: 3px solid lightgray;
+      fill: lightgray;
+      opacity: .5;
     }
 
     &:hover:not([aria-disabled="true"]) {
-        background-color: rgba(255,255,255,.3);
+      background-color: rgba(255, 255, 255, .3);
     }
 
-    @include media-breakpoint-up(lg){
-        display: block;
-        width: 3rem;
-        height: 3rem;
+    @include media-breakpoint-up(lg) {
+      display: block;
+      width: 3rem;
+      height: 3rem;
     }
-}
+  }
 
-.swiper--button-icon {
+  &--button-icon {
     display: block;
     width: 100%;
     height: 100%;
+    pointer-events: none;
 
     svg {
-        position: absolute;
-        fill: inherit;
-        width: .75rem;
-        height: 1.125rem;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(.7);
+      position: absolute;
+      fill: inherit;
+      width: .75rem;
+      height: 1.125rem;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(.7);
 
-        @include media-breakpoint-up(md){
-            transform: translate(-50%, -50%);
-        }
+      @include media-breakpoint-up(md) {
+        transform: translate(-50%, -50%);
+      }
     }
-}
+  }
 
-.swiper--button-prev {
+  &--button-prev {
     left: 15px
-}
+  }
 
-.swiper--button-next {
+  &--button-next {
     right: 15px;
-}
+  }
 
-.swiper-pagination-bullet {
+  &--pagination {
+    @extend .swiper-pagination;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &--pagination-bullet {
+    @extend .swiper-pagination-bullet;
     width: 12px;
     height: 12px;
     background: transparent;
     border: 2px solid $background-color;
+    margin-right: 5px;
 
-    @include media-breakpoint-up(md){
-        width: 15px;
-        height: 15px;
+    @include media-breakpoint-up(md) {
+      width: 15px;
+      height: 15px;
     }
-}
 
-.swiper-pagination-bullet-active {
-    background: $background-color;
+    &-active {
+      background: $background-color;
+      opacity: 1;
+    }
+  }
 }

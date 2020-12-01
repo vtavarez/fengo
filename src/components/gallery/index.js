@@ -1,38 +1,41 @@
-import { Swiper, Pagination, Navigation } from 'swiper/swiper.esm';
+import Swiper, { Pagination, Navigation } from 'swiper';
 
 Swiper.use([Pagination, Navigation]);
 export class Gallery {
+    sectionId;
+    mountingEl;
     slideshow;
-    prevButton;
-    nextButton;
+    buttonPrev;
+    buttonNext;
+    settings = {
+        keyboard: true,
+        autoHeight: false,
+        simulateTouch: false,
+        containerModifierClass: 'gallery--slideshow-',
+        slideClass: 'gallery--slideshow-slide',
+        pagination: {
+            el: '.gallery--slideshow-pagination',
+            type: 'bullets',
+            clickable: true,
+            bulletClass: 'gallery--slideshow-bullet',
+            bulletActiveClass: 'gallery--slideshow-bullet-active',
+        },
+    }
 
     constructor(sectionId) {
-        this.slideshow = document.getElementById(`gallery-slideshow-${sectionId}`);
-        this.prevButton = this.slideshow.querySelector('.swiper--button-prev');
-        this.nextButton = this.slideshow.querySelector('.swiper--button-next');
-
-        new Swiper(this.slideshow, {
-            pagination: {
-                el: '.content--slideshow-pagination',
-                type: 'bullets',
-                clickable: true,
-                bulletClass: 'content--slideshow-bullet',
-                bulletActiveClass: 'content--slideshow-bullet-active',
-            },
-            keyboard: true,
-            containerModifierClass: 'content--slideshow',
-        });
-
-        this.slideshow?.addEventListener('click', this.dispatchEvent.bind(this));
-
-        // this.slideshow = this.slideshow?.swiper;
+        this.mountingEl = document.querySelector(`#gallery-slideshow-${sectionId}`);
+        this.buttonPrev = this.mountingEl?.querySelector(`#button-prev-${sectionId}`);
+        this.buttonNext = this.mountingEl?.querySelector(`#button-next-${sectionId}`);
+        this.mountingEl?.addEventListener('click', this.dispatchEvent.bind(this));
+        this.slideshow = new Swiper(this.mountingEl, this.settings);
     }
 
     dispatchEvent(evt) {
-        if (evt.target.className === 'swiper--button-prev') {
+        evt.stopPropagation();
+        if (evt.target.className === 'gallery--slideshow-button-prev') {
             this.prev()
         }
-        if (evt.target.className === 'swiper--button-next') {
+        if (evt.target.className === 'gallery--slideshow-button-next') {
             this.next()
         }
     }
@@ -41,31 +44,38 @@ export class Gallery {
         this.slideshow.slideNext(500);
 
         if (!this.slideshow.isBeginning) {
-            this.prevButton.removeAttribute('disabled');
+            this.buttonPrev.removeAttribute('disabled');
+            this.buttonPrev.setAttribute('aria-disabled', 'false');
         }
 
-        if (this.slideshow.isEnd) {
-            this.nextButton.addAttribute('disabled');
+        if(this.slideshow.isEnd){
+            this.buttonNext.setAttribute('disabled', 'disabled');
+            this.buttonNext.setAttribute('aria-disabled', 'true');
         }
-    };
+    }
 
     prev() {
         this.slideshow.slidePrev(500);
 
         if (!this.slideshow.isEnd) {
-            this.nextButton.removeAttribute('disabled');
+            this.buttonNext.removeAttribute('disabled');
+            this.buttonNext.setAttribute('aria-disabled', 'false');
         }
 
-        if (this.slideshow.isBeginning) {
-            this.prevButton.addAttribute('disabled');
+        if(this.slideshow.isBeginning){
+            this.buttonPrev.setAttribute('disabled', 'disabled');
+            this.buttonPrev.setAttribute('aria-disabled', 'true');
         }
-    };
+    }
 
-    init() {
-        console.log('blah');
+    init() {}
+
+    getSectionId() {
+        return this.sectionId;
     }
 
     kill() {
-        this.slideshow.removeEventListener('click');
+        this.slideshow.destroy();
+        this.mountingEl.removeEventListener('click');
     }
 }

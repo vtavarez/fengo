@@ -1,11 +1,11 @@
-<div class="content" {{ block.shopify_attributes }}>
+<div class="gallery--content" {{ block.shopify_attributes }}>
     {% assign sizes  = srcset_sizes | split: '|' %}
 
     {% unless block.type != 'video' %}
 
         {% if block.settings.video_url.type == 'youtube' %}
 
-        <iframe class="content--video"
+        <iframe class="gallery--video"
                 src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}?color=white&ampcontrols=1&amp;enablejsapi=1&amp;modestbranding=1&amp;playsinline=1&amp;rel=0"
                 frameborder="0"
                 title="{{ block.settings.video_url.type }}"
@@ -15,7 +15,7 @@
 
         {% else %}
 
-        <iframe class="content--video"
+        <iframe class="gallery--video"
                 src="https://player.vimeo.com/video/{{ block.settings.video_url.id }}?&title=0&byline=0&color=ffffff&transparent=false"
                 title="{{ block.settings.video_url.type }}"
                 frameborder="0"
@@ -30,7 +30,7 @@
 
         {% if sizes.size == 1 %}
             <img
-                class="content--banner"
+                class="gallery--banner"
                 src="{{ block.settings.image | img_url: sizes[0] }}"
                 alt="{{ block.settings.image.alt }}
             ">
@@ -45,16 +45,16 @@
                     media="(min-width: 768px)"
                 >
                 <img
-                    class="content--banner"
+                    class="gallery--banner"
                     src="{{ block.settings.image | img_url: sizes[0] }}"
                     alt="{{ block.settings.image.alt }}
                 ">
             </picture>
         {% endif %}
 
-        <div class="content--banner-wrapper">
-            <a class="content--banner-link" href="{{ block.settings.url }}">
-                <div class="content--banner-content">
+        <div class="gallery--banner-wrapper">
+            <a class="gallery--banner-link" href="{{ block.settings.url }}">
+                <div class="gallery--banner-content">
                     {{ block.settings.content }}
                 </div>
             </a>
@@ -63,7 +63,7 @@
     {% endunless %}
 
     {% unless block.type != 'slideshow'%}
-        {% assign app_type = 'gallery' %}
+        {% assign app_type = 'gallery-slideshow' %}
 
         <script id="{{ sectionId }}-{{ app_type }}">
             window.theme.vue.availableApps.push({
@@ -76,130 +76,56 @@
             id="gallery-slideshow-{{ sectionId }}"
             data-app-id="{{ sectionId }}"
             data-app-type="{{ app_type }}"
-            class="content--slideshow swiper-container"
+            class="gallery--slideshow"
         >
             <div class="swiper-wrapper">
                 {%- comment -%}Slides{%- endcomment -%}
                 {% unless block.settings.image_one == blank %}
-                    <div class="swiper-slide">
-                        {% if sizes.size == 1 %}
-                            <img
-                                class="content--banner"
-                                src="{{ block.settings.image_one | img_url: sizes[0] }}"
-                                alt="{{ block.settings.image.alt }}"
-                            >
-                        {% else %}
-                            <picture>
-                                <source
-                                    srcset="{{ block.settings.image_one | img_url: sizes[2] }}"
-                                    media="(min-width: 992px)"
-                                >
-                                <source
-                                    srcset="{{ block.settings.image_one | img_url: sizes[1] }}"
-                                    media="(min-width: 768px)"
-                                >
-                                <img
-                                    class="content--banner"
-                                    src="{{ block.settings.image_one | img_url: sizes[0] }}"
-                                    alt="{{ block.settings.image.alt }}"
-                                >
-                            </picture>
-                        {% endif %}
-                        <div class="content--slideshow-wrapper">
-                            <a class="content--banner-link" href="{{ block.settings.url_one }}">
-                                <div class="content--banner-content">
-                                    {{ block.settings.content_one }}
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+                    {% render 'gallery-slideshow-slide' with
+                        img_sizes: sizes,
+                        image: block.settings.image_one,
+                        url: block.settings.url_one,
+                        content: block.settings.content_one
+                    %}
                 {% endunless %}
                 {% unless block.settings.image_two == blank %}
-                    <div class="swiper-slide">
-                        {% if sizes.size == 1 %}
-                            <img
-                                class="content--banner"
-                                src="{{ block.settings.image_two | img_url: sizes[0] }}"
-                                alt="{{ block.settings.image.alt }}"
-                            >
-                        {% else %}
-                            <picture>
-                                <source
-                                    srcset="{{ block.settings.image_two | img_url: sizes[2] }}"
-                                    media="(min-width: 992px)"
-                                >
-                                <source
-                                    srcset="{{ block.settings.image_two | img_url: sizes[1] }}"
-                                    media="(min-width: 768px)"
-                                >
-                                <img
-                                    class="content--banner"
-                                    src="{{ block.settings.image_two | img_url: sizes[0] }}"
-                                    alt="{{ block.settings.image.alt }}"
-                                >
-                            </picture>
-                        {% endif %}
-                        <div class="content--slideshow-wrapper">
-                            <a class="content--banner-link" href="{{ block.settings.url_two }}">
-                                <div class="content--banner-content">
-                                    {{ block.settings.content_two }}
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+                    {% render 'gallery-slideshow-slide' with
+                        img_sizes: sizes,
+                        image: block.settings.image_two,
+                        url: block.settings.url_two,
+                        content: block.settings.content_two
+                    %}
                 {% endunless %}
                 {% unless block.settings.image_three == blank %}
-                    <div class="swiper-slide">
-                        {% if sizes.size == 1 %}
-                            <img
-                                class="content--banner"
-                                src="{{ block.settings.image_three | img_url: sizes[0] }}"
-                                alt="{{ block.settings.image.alt }}"
-                            >
-                        {% else %}
-                            <picture>
-                                <source
-                                    srcset="{{ block.settings.image_three | img_url: sizes[2] }}"
-                                    media="(min-width: 992px)"
-                                >
-                                <source
-                                    srcset="{{ block.settings.image_three | img_url: sizes[1] }}"
-                                    media="(min-width: 768px)"
-                                >
-                                <img
-                                    class="content--banner"
-                                    src="{{ block.settings.image_three | img_url: sizes[0] }}"
-                                    alt="{{ block.settings.image.alt }}"
-                                >
-                            </picture>
-                        {% endif %}
-                        <div class="content--slideshow-wrapper">
-                            <a class="content--banner-link" href="{{ block.settings.url_three }}">
-                                <div class="content--banner-content">
-                                    {{ block.settings.content_three }}
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+                    {% render 'gallery-slideshow-slide' with
+                        img_sizes: sizes,
+                        image: block.settings.image_three,
+                        url: block.settings.url_three,
+                        content: block.settings.content_three
+                    %}
                 {% endunless %}
             </div>
             {% unless block.settings.image_two == blank %}
-                <div class="content--slideshow-pagination"></div>
+                <div class="gallery--slideshow-pagination"></div>
                 {% unless navigation == false %}
                     <button
-                        class="swiper--button-prev"
+                        id="button-prev-{{ section.id }}"
+                        class="gallery--slideshow-button-prev"
                         aria-label="previous slide"
+                        aria-disabled="true"
                         disabled="disabled"
                     >
-                        <span class="swiper--button-icon" aria-hidden="true">
+                        <span class="gallery--slideshow-button-icon" aria-hidden="true">
                             {% render 'icon--chevron-left.svg' %}
                         </span>
                     </button>
                     <button
-                        class="swiper--button-next"
+                        id="button-next-{{ section.id }}"
+                        class="gallery--slideshow-button-next"
                         aria-label="next slide"
+                        aria-disabled="false"
                     >
-                        <span class="swiper--button-icon" aria-hidden="true">
+                        <span class="gallery--slideshow-button-icon" aria-hidden="true">
                             {% render 'icon--chevron-right.svg' %}
                         </span>
                     </button>

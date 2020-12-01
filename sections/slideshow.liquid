@@ -1,10 +1,9 @@
-{% assign app_type = 'vue-slideshow' %}
+{% assign app_type = 'slideshow' %}
 
-<div id="vue-slideshow-{{ section.id }}"
-     class="swiper-container"
+<div id="slideshow-{{ section.id }}"
+     class="slideshow"
      data-app-id="{{ section.id }}"
      data-app-type="{{ app_type }}"
-     v-swiper:slideshow="options"
 >
     <script id="{{ section.id }}-{{ app_type }}">
         window
@@ -13,35 +12,45 @@
             .availableApps
             .push({type: "{{ app_type }}", id: "{{ section.id }}"});
     </script>
-    <div
-        class="swiper-wrapper"
-        v-bind:class="initializing"
-    >
+    <div class="swiper-wrapper slideshow--initializing">
         {%- comment -%} Slides {%- endcomment -%}
         {% for block in section.blocks %}
-            <div class="swiper-slide" {{ block.shopify_attributes }}>
+            <div class="slideshow--slide" {{ block.shopify_attributes }}>
                 <picture>
-                    <source srcset="{{ block.settings.image | img_url: '1900x'}}" media="(min-width: 1200px)">
-                    <source srcset="{{ block.settings.image | img_url: '1000x'}}" media="(min-width: 992px)">
-                    <source srcset="{{ block.settings.image | img_url: '800x'}}" media="(min-width: 768px)">
+                    <source
+                        srcset="{{ block.settings.image | img_url: '1900x'}}"
+                        media="(min-width: 1200px)"
+                    >
+                    <source
+                        srcset="{{ block.settings.image | img_url: '1000x'}}"
+                        media="(min-width: 992px)"
+                    >
+                    <source
+                        srcset="{{ block.settings.image | img_url: '800x'}}"
+                        media="(min-width: 768px)"
+                    >
                     <img
-                        class="swiper--image"
+                        class="slideshow--image"
                         src="{{ block.settings.image | img_url: '400x' }}"
                         alt="{{ block.settings.image.alt }}"
                     >
                 </picture>
-                <div class="swiper--slide-content">
-                    <div class="container">
-                        <div class="swiper--content
-                            {% if block.settings.align == 'Left' %} swiper--content-left {% endif %}
-                            {% if block.settings.align == 'Right' %} swiper--content-right {% endif %}
-                            {% if block.settings.align == 'Center' %} swiper--content-center {% endif %}"
+                <div class="slideshow--slide-content">
+                    <div class="slideshow--slide-content-container">
+                        <div class="slideshow--slide-content-info
+                            {% if block.settings.align == 'Left' %}slideshow--slide-content-left{% endif %}
+                            {% if block.settings.align == 'Right' %}slideshow--slide-content-right{% endif %}
+                            {% if block.settings.align == 'Center' %}slideshow--slide-content-center{% endif %}"
                         >
                             {{ block.settings.content }}
 
-                            <a  class="swiper--link {% for class in block.settings.link_classes %}{{ class }}{% endfor %}"
+                            <a  class="slideshow--slide-content-link {% for class in block.settings.link_classes %}{{ class }}{% endfor %}"
                                 href="{{ block.settings.url }}"
+                                {% if forloop.first %}
+                                tabindex="0"
+                                {% else %}
                                 tabindex="-1"
+                                {% endif %}
                             >
                                 {{ block.settings.link_cta }}
                             </a>
@@ -52,27 +61,25 @@
         {% endfor %}
     </div>
     {% unless section.blocks.size < 2 %}
-        <div class="swiper-pagination"></div>
-
+        <div class="slideshow--pagination"></div>
         <button
-            class="swiper--button-prev"
-            v-bind:aria-disabled="controls.prev.disable"
-            v-bind:disabled="controls.prev.disable"
-            v-on:click="prev"
+            id="button-prev-{{ section.id }}"
+            class="slideshow--button-prev"
             aria-label="previous slide"
+            aria-disabled="true"
+            disabled="disabled"
         >
-            <span class="swiper--button-icon" aria-hidden="true">
+            <span class="slideshow--button-icon" aria-hidden="true">
                 {% render 'icon-chevron-left.svg' %}
             </span>
         </button>
         <button
-            class="swiper--button-next"
-            v-bind:aria-disabled="controls.next.disable"
-            v-bind:disabled="controls.next.disable"
-            v-on:click="next"
+            id="button-next-{{ section.id }}"
+            class="slideshow--button-next"
             aria-label="next slide"
+            aria-disabled="false"
         >
-            <span class="swiper--button-icon" aria-hidden="true">
+            <span class="slideshow--button-icon" aria-hidden="true">
                 {% render 'icon-chevron-right.svg' %}
             </span>
         </button>
@@ -84,18 +91,18 @@
     "name": "Slideshow",
     "max_blocks": 4,
         "blocks": [
+        {
+            "name": "Slide",
+            "type": "slide",
+            "settings": [
                 {
-                        "name": "Slide",
-                        "type": "slide",
-                        "settings": [
-                                {
-                                        "id": "image",
-                                        "type": "image_picker",
-                                        "label": "Image"
+                    "id": "image",
+                    "type": "image_picker",
+                    "label": "Image"
                 },
-                                {
-                                        "id": "content",
-                                        "type": "html",
+                {
+                    "id": "content",
+                    "type": "html",
                     "label": "Content",
                     "info": "Use basic HTML to format text"
                 },
@@ -132,7 +139,7 @@
                     "label": "Link CSS classes",
                     "info": "Seperate each class with a space."
                 }
-                        ]
+            ]
         }
     ],
     "presets": [

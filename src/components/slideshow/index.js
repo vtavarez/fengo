@@ -1,117 +1,113 @@
-import { Swiper as SwiperClass, Pagination, Navigation } from 'swiper/swiper.esm';
-import getAwesomeSwiper from 'vue-awesome-swiper/dist/exporter';
+import Swiper, { Pagination, Navigation } from 'swiper';
 
-SwiperClass.use([Pagination, Navigation])
-
-const { directive } = getAwesomeSwiper(SwiperClass);
-
-class Slideshow {
-    constructor(id){
-        this.sectionId = id;
-        this.appType = 'vue-slideshow';
-        this._appInstance = null;
-        this._mountingNode = `#vue-slideshow-${id}`;
+Swiper.use([Pagination, Navigation]);
+export class Slideshow {
+    sectionId;
+    mountingEl;
+    slideshow;
+    buttonPrev;
+    buttonNext;
+    settings = {
+        keyboard: true,
+        autoHeight: false,
+        simulateTouch: false,
+        containerModifierClass: 'slideshow-',
+        slideClass: 'slideshow--slide',
+        pagination: {
+            el: '.slideshow--pagination',
+            type: 'bullets',
+            clickable: false,
+            bulletClass: 'slideshow--pagination-bullet',
+            bulletActiveClass: 'slideshow--pagination-bullet-active',
+        },
+        on: {
+            init: this.initialized.bind(this),
+            slideChange: this.activeSlideLink.bind(this),
+        },
+    }
+    state = {
+        slideshow_links: {}
     }
 
-    getSectionId(){
+    constructor(sectionId) {
+        this.sectionId = sectionId;
+        this.mountingEl = document.querySelector(`#slideshow-${sectionId}`);
+        this.buttonPrev = this.mountingEl?.querySelector(`#button-prev-${sectionId}`);
+        this.buttonNext = this.mountingEl?.querySelector(`#button-next-${sectionId}`);
+        this.mountingEl?.addEventListener('click', this.dispatchEvent.bind(this));
+        this.slideshow = new Swiper(this.mountingEl, this.settings);
+    }
+
+    dispatchEvent(evt) {
+        evt.stopPropagation();
+        if(evt.target.className === 'slideshow--button-prev') {
+            this.prev()
+        }
+        if (evt.target.className === 'slideshow--button-next') {
+            this.next();
+        }
+    }
+
+    initialized() {
+        this.mountingEl.querySelector('.swiper-wrapper')
+        .classList.remove('slideshow--initializing');
+    }
+
+    next() {
+        this.slideshow.slideNext(500);
+
+        if (!this.slideshow.isBeginning) {
+            this.buttonPrev.removeAttribute('disabled');
+            this.buttonPrev.setAttribute('aria-disabled', 'false');
+        }
+
+        if(this.slideshow.isEnd){
+            this.buttonNext.setAttribute('disabled', 'disabled');
+            this.buttonNext.setAttribute('aria-disabled', 'true');
+        }
+
+        this.activeSlideLink();
+    }
+
+    prev() {
+        this.slideshow.slidePrev(500);
+
+        if (!this.slideshow.isEnd) {
+            this.buttonNext.removeAttribute('disabled');
+            this.buttonNext.setAttribute('aria-disabled', 'false');
+        }
+
+        if(this.slideshow.isBeginning){
+            this.buttonPrev.setAttribute('disabled', 'disabled');
+            this.buttonPrev.setAttribute('aria-disabled', 'true');
+        }
+
+        this.activeSlideLink();
+    }
+
+    activeSlideLink() {
+        //* store active slide link
+        if(!this.state.slideshow_links[this.slideshow.activeIndex]){
+            this.state.slideshow_links[this.slideshow.activeIndex] = this.slideshow
+            .slides[this.slideshow.activeIndex]
+            .querySelector('.slideshow--slide-content-link');
+        }
+        //* set previous slide link tabindex to -1
+        if(this.slideshow.previousIndex){
+            this.state.slideshow_links[this.slideshow.previousIndex].tabIndex = "-1";
+        }
+        //* set current slide link tabindex to 0
+        this.state.slideshow_links[this.slideshow.activeIndex].tabIndex = "0";
+    }
+
+    init(){}
+
+    getSectionId() {
         return this.sectionId;
     }
 
-    kill(){
-        this._appInstance.kill();
-    }
-
-    init(){
-        this._appInstance = new Vue({
-            el: this._mountingNode,
-            directives: {
-                swiper: directive
-            },
-            data: {
-                options: {
-                    pagination: {
-                        el: '.swiper-pagination',
-                        type: 'bullets'
-                    },
-                    autoHeight: false,
-                    keyboard: true
-                },
-                controls: {
-                    prev: {
-                        disable: true
-                    },
-                    next: {
-                        disable: false
-                    }
-                },
-                slideshow_links: {},
-                slideshow_initializing: true
-            },
-            methods: {
-                initialized(){
-                    this.slideshow_initializing = false;
-                },
-                next() {
-                    this.slideshow.slideNext(500);
-
-                    if (!this.slideshow.isBeginning) {
-                        this.controls.prev.disable = false;
-                    }
-
-                    if(this.slideshow.isEnd){
-                        this.controls.next.disable = true;
-                    }
-
-                    this.activeSlideLink();
-                },
-                prev() {
-                    this.slideshow.slidePrev(500);
-
-                    if (!this.slideshow.isEnd) {
-                        this.controls.next.disable = false;
-                    }
-
-                    if(this.slideshow.isBeginning){
-                        this.controls.prev.disable = true;
-                    }
-
-                    this.activeSlideLink();
-                },
-                activeSlideLink() {
-                    //* store active slide link
-                    if(!this.slideshow_links[this.slideshow.activeIndex]){
-                        this.slideshow_links[this.slideshow.activeIndex] = this.slideshow.slides[this.slideshow.activeIndex].querySelector('.swiper--link');
-                    }
-                    //* set previous slide link tabindex to -1
-                    if(this.slideshow.previousIndex){
-                        this.slideshow_links[this.slideshow.previousIndex].tabIndex = "-1";
-                    }
-                    //* set current slide link tabindex to 0
-                    this.slideshow_links[this.slideshow.activeIndex].tabIndex = "0";
-                },
-                kill(){
-                    this.$destroy();
-                }
-            },
-            mounted() {
-                if(this.slideshow.initialized){
-                    this.initialized();
-                }
-
-                if (this.slideshow.slides.length > 0){
-                    this.activeSlideLink();
-                }
-            },
-            computed: {
-                initializing(){
-                    return {
-                        'swiper--initializing': this.slideshow_initializing
-                    }
-                }
-            }
-        });
+    kill() {
+        this.slideshow.destroy();
+        this.mountingEl.removeEventListener('click');
     }
 }
-
-
-export default Slideshow;

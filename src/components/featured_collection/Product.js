@@ -39,7 +39,7 @@ export class Product {
             .priceElement
             .id !== `product--price-${this.state.product.id}`
         ) {
-            this.priceElement = document.getElementById(`product--price-${this.state.product.id}`);
+            this.priceElement = document.querySelector(`#product--price-${this.state.product.id}`);
         }
 
         if (this.state.selectedVariant.compare_at_price > 0) {
@@ -73,7 +73,7 @@ export class Product {
             .options2Element
             .id !== `product--options2-${this.state.product.id}`
         ){
-            this.options2Element = document.getElementById(`product--options2-${this.state.product.id}`);
+            this.options2Element = document.querySelector(`#product--options2-${this.state.product.id}`);
         }
 
         for (let i = 0; i < options.length; i++) {
